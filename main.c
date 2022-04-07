@@ -1,6 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include "data.h"
 
 int main()
 {
+    int n = 10;
+    int *a = createArray(n);
+    index i;
+    i.x = 0;
+    i.y = 0;
+    modifyValue(a, i, true);
+    printf("%d\n", getValue(a, i));
     return 0;
 }

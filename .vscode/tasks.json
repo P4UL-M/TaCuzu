@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "type": "shell",
+        "label": "Compile With clang++",
+        //"command": "clang++",/usr/bin/clang++
+        "command": "/usr/bin/clang++",
+        "args": [
+          "-std=c++11",
+          "-stdlib=libc++",
+          // My project fitBodyBootCamp were under 
+          // /Users/marryme/VSCode/CppProject/fitBodyBootCamp
+          // So ${workspcaeFolder} also were
+          // /Users/marryme/VSCode/CppProject/fitBodyBootCamp
+          // all the *.cpp files were under
+          // /Users/marryme/VSCode/CppProject/fitBodyBootCamp
+          "${workspaceFolder}/*.c", // Have changed
+          "-o",
+          // Thanks those chiense website bloggers!
+          // 1.mac vscode compile c++ multi-directory code demo
+          // https://blog.csdn.net/fangfengzhen115/article/details/121496770?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-4.pc_relevant_default&spm=1001.2101.3001.4242.3&utm_relevant_index=7
+          // 2.Compile and debug c++ multi-folder project under VSCode (non-makefile)
+          // https://blog.csdn.net/BaiRuichang/article/details/106463035
+          // I also put the main.o under my current workspace directory
+          // This after "-o"  is the target file test.o or test.out or test
+          "${workspaceFolder}/main", // Have changed
+          "-I",
+          // This after "-I" if the include files directory
+          "${workspaceFolder}", // Have changed
+          "-Wall",
+          "-g"
+        ],
+        "options": {
+          // "cwd" is the source files directory
+          "cwd": "${workspaceFolder}" // Have changed
+        },
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ]
+  }
