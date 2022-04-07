@@ -3,13 +3,13 @@
 #include "data.h"
 #include <stdbool.h>
 
-int *createArray(int n)
+unsigned int *createArray(int n)
 {
-    int *a = (int *)malloc(n * sizeof(int));
+    unsigned int *a = (unsigned int *)malloc(n * sizeof(unsigned int));
     return a;
 }
 
-void modifyValue(int *a, index i, bool val)
+void modifyValue(unsigned int *a, index i, bool val)
 {
     bool _val = getValue(a, i);
     if (val == _val)
@@ -26,7 +26,7 @@ void modifyValue(int *a, index i, bool val)
     }
 }
 
-bool getValue(int *a, index i)
+bool getValue(unsigned int *a, index i)
 {
     return a[i.y] >> i.x & 1;
 }

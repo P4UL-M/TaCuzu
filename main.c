@@ -6,7 +6,7 @@
 int main()
 {
     int n = 10;
-    int *a = createArray(n);
+    unsigned int *a = createArray(n);
     index i;
     i.x = 4;
     i.y = 0;

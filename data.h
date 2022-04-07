@@ -10,8 +10,8 @@ typedef struct
     int y;
 } index;
 
-int *createArray(int size);
-void modifyValue(int *array, index index, bool value);
-bool getValue(int *array, index index);
+unsigned int *createArray(int size);
+void modifyValue(unsigned int *array, index index, bool value);
+bool getValue(unsigned int *array, index index);
 
 #endif
