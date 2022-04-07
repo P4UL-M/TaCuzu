@@ -5,10 +5,8 @@
         "type": "shell",
         "label": "Compile With clang++",
         //"command": "clang++",/usr/bin/clang++
-        "command": "/usr/bin/clang++",
+        "command": "gcc",
         "args": [
-          "-std=c++11",
-          "-stdlib=libc++",
           // My project fitBodyBootCamp were under 
           // /Users/marryme/VSCode/CppProject/fitBodyBootCamp
           // So ${workspcaeFolder} also were
