@@ -13,5 +13,6 @@ typedef struct
 unsigned int *createArray(int size);
 void modifyValue(unsigned int *array, index index, bool value);
 bool getValue(unsigned int *array, index index);
+unsigned int *createMask(int size, int difficulty);
 
 #endif
