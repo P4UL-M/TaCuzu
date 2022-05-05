@@ -2,15 +2,10 @@
 #include <stdlib.h>
 #include "data.h"
 #include "generation.h"
+#include "grid.h"
 #include "cache.h"
 #include <stdbool.h>
 #include <math.h>
-
-unsigned int *generate_grid(unsigned int size)
-{
-    unsigned int *a = createArray(size);
-    return a;
-}
 
 bool getDigit(unsigned int i, int digit)
 {
@@ -26,6 +21,32 @@ int countSetBits(unsigned int i)
         count++;
     }
     return count;
+}
+
+void freeSizedList(SizedList *l)
+{
+    if (l == NULL)
+    {
+        return;
+    }
+    if (l->data != NULL)
+    {
+        free(l->data);
+    }
+    free(l);
+}
+
+void freeList(ListSizedList *l)
+{
+    if (l == NULL)
+    {
+        return;
+    }
+    if (l->data != NULL)
+    {
+        free(l->data);
+    }
+    free(l);
 }
 
 SizedList *list_lines(unsigned int size)
@@ -102,6 +123,24 @@ SizedList *append(SizedList *l, unsigned int e)
         res->data[i] = l->data[i];
     }
     res->data[l->size] = e;
+    freeSizedList(l);
+    return res;
+}
+
+SizedList *removeFromIndex(SizedList *l, unsigned int index)
+{
+    SizedList *res = (SizedList *)malloc(sizeof(SizedList));
+    res->size = l->size - 1;
+    res->data = (unsigned int *)malloc(sizeof(unsigned int) * res->size);
+    for (int i = 0; i < index; i++)
+    {
+        res->data[i] = l->data[i];
+    }
+    for (int i = index; i < l->size - 1; i++)
+    {
+        res->data[i] = l->data[i + 1];
+    }
+    freeSizedList(l);
     return res;
 }
 
@@ -115,6 +154,7 @@ ListSizedList *appendList(ListSizedList *l, SizedList *e)
         res->data[i] = l->data[i];
     }
     res->data[l->size] = e;
+    freeList(l);
     return res;
 }
 
@@ -186,4 +226,143 @@ ListSizedList *knapsack(int i, int target, int k, SizedList *A, int N)
     ret = extendList(ret, knapsack(i + 1, target, k, A, N));
     add_entry(hashCode(temp), ret);
     return ret;
+}
+
+ListSizedList *sortBadSet(ListSizedList *list)
+{
+    ListSizedList *res = (ListSizedList *)malloc(sizeof(ListSizedList));
+    res->size = 0;
+    res->data = NULL;
+    for (int j = 0; j < list->size; j++)
+    {
+        SizedList *l = list->data[j];
+        unsigned int *tr = transpose(l->data, l->size);
+        bool test = true;
+        for (int i = 0; i < l->size; i++)
+        {
+            if (countBits(tr[i]) != l->size / 2)
+            {
+                test = false;
+                break;
+            }
+        }
+        if (test && checkDouble(tr, l->size))
+        {
+            res = appendList(res, l);
+        }
+    }
+    return res;
+}
+
+SizedList *sortGrid(SizedList *block, int index, SizedList *remain)
+{
+    if (block == NULL)
+    {
+        SizedList *res = (SizedList *)malloc(sizeof(SizedList));
+        res->size = 0;
+        res->data = NULL;
+        block = res;
+    }
+    if (block->size == 0 || block->size == 1)
+    {
+        block = append(block, remain->data[index]);
+        remain = removeFromIndex(remain, index);
+        return sortGrid(block, index, remain);
+    }
+    if (remain->size > 0)
+    {
+        int nb = remain->size + block->size - 2;
+        bool test = true;
+        for (int digit = 0; digit < nb; digit++)
+        {
+            if (getDigit(remain->data[index], digit) == getDigit(block->data[block->size - 1], digit) && getDigit(remain->data[index], digit) == getDigit(block->data[block->size - 2], digit))
+            {
+                test = false;
+                break;
+            }
+        }
+        if (test)
+        {
+            block = append(block, remain->data[index]);
+            remain = removeFromIndex(remain, index);
+            return sortGrid(block, 0, remain);
+        }
+        else
+        {
+            if (index == remain->size - 1)
+            {
+                remain = append(remain, block->data[block->size - 1]);
+                block = removeFromIndex(block, block->size - 1);
+                return sortGrid(block, 0, remain);
+            }
+            return sortGrid(block, index + 1, remain);
+        }
+    }
+    return block;
+}
+
+void swap(SizedList *l, int i, int j)
+{
+    unsigned int tmp = l->data[i];
+    l->data[i] = l->data[j];
+    l->data[j] = tmp;
+}
+
+// permutation function
+ListSizedList *listGridFromSet(SizedList *arr, int start, int end, ListSizedList *l)
+{
+    if (l == NULL)
+    {
+        l = (ListSizedList *)malloc(sizeof(ListSizedList));
+        l->size = 0;
+        l->data = NULL;
+    }
+    if (start == end)
+    {
+        if (checkArray(arr->data, arr->size))
+        {
+            l = appendList(l, copy(arr));
+        }
+        return l;
+    }
+    int i;
+    for (i = start; i <= end; i++)
+    {
+        // swapping numbers
+        swap(arr, i, start);
+        // fixing one first digit
+        // and calling permutation on
+        // the rest of the digits
+        l = listGridFromSet(arr, start + 1, end, l);
+        swap(arr, i, start);
+    }
+    return l;
+}
+
+unsigned int *generate_grid(unsigned int size)
+{
+    SizedList *lines = list_lines(size);
+
+    int k = size;
+    int N = lines->size;
+    int P = (pow(2, k) - 1) * k / 2;
+    ListSizedList *knapRes = knapsack(0, P, k, lines, N);
+    if (lines)
+        freeSizedList(lines);
+
+    ListSizedList *sortedSets = sortBadSet(knapRes);
+    int index = rand() % sortedSets->size;
+    SizedList *res = sortedSets->data[index];
+    ListSizedList *grids = listGridFromSet(res, 0, res->size - 1, NULL);
+    while (grids->size == 0)
+    {
+        index = rand() % sortedSets->size;
+        res = sortedSets->data[index];
+        freeList(grids);
+        grids = listGridFromSet(res, 0, res->size - 1, NULL);
+    }
+    SizedList *grid = copy(grids->data[rand() % grids->size]);
+    freeList(sortedSets);
+    freeList(grids);
+    return grid->data;
 }

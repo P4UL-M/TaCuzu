@@ -21,25 +21,25 @@ int main()
     printf("\nTranspose:\n");
     displayArray(transpose(a, n), n);
     printf("\nIt's %d\n", checkArray(a, n));
-    SizedList *lines = list_lines(n);
-    for (int i = 0; i < lines->size; i++)
+
+    a = generate_grid(n);
+    printf("%d\n", checkArray(a, n));
+    displayArray(a, n);
+
+    for (int i = 0; i < 1000; i++)
     {
-        printf("%d, ", lines->data[i]);
-    }
-    printf("\nSize: %d\n", lines->size);
-    int k = n;
-    int N = lines->size;
-    int P = pow(2, k + 1) - 2;
-    printf("%d\n", P);
-    ListSizedList *res = knapsack(0, P, k, lines, N);
-    printf("%d\n", res->data[0]->size);
-    for (int j = 0; j < res->size; j++)
-    {
-        for (int i = 0; i < res->data[j]->size; i++)
+        a = generate_grid(n);
+        if (!checkArray(a, n))
         {
-            printf("%d, ", res->data[j]->data[i]);
+            displayArray(a, n);
+            break;
         }
-        printf("\n");
+        else
+        {
+            printf("%d\n", i);
+        }
+        free(a);
     }
+
     return 0;
 }

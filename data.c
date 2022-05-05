@@ -48,16 +48,37 @@ bool getValue(unsigned int *a, INDEX i)
 unsigned int *transpose(unsigned int *a, int n)
 {
     unsigned int *t = createArray(n);
-    index i, i_;
+    INDEX i, i_;
     for (i.y = 0; i.y < n; i.y++)
     {
         for (i.x = 0; i.x < n; i.x++)
         {
             i_.x = i.y;
             i_.y = i.x;
-            modifyValue(t, i, getValue(a, i_));     //To get easily the columns
+            modifyValue(t, i, getValue(a, i_)); // To get easily the columns
         }
-        printf("\n");
     }
     return t;
+}
+
+unsigned int sum(unsigned int *a, int n)
+{
+    unsigned int sum = 0;
+    for (int i = 0; i < n; i++)
+    {
+        sum += a[i];
+    }
+    return sum;
+}
+
+bool is_in(unsigned int *a, int n, unsigned int val)
+{
+    for (int i = 0; i < n; i++)
+    {
+        if (a[i] == val)
+        {
+            return true;
+        }
+    }
+    return false;
 }
