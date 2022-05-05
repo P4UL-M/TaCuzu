@@ -23,7 +23,7 @@ unsigned int *createArray(int n)
     return a;
 }
 
-void modifyValue(unsigned int *a, index i, bool val)
+void modifyValue(unsigned int *a, INDEX i, bool val)
 {
     bool _val = getValue(a, i);
     if (val == _val)
@@ -40,7 +40,7 @@ void modifyValue(unsigned int *a, index i, bool val)
     }
 }
 
-bool getValue(unsigned int *a, index i)
+bool getValue(unsigned int *a, INDEX i)
 {
     return a[i.y] >> i.x & 1;
 }

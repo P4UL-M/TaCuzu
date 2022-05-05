@@ -3,6 +3,7 @@
 #include "data.h"
 #include "grid.h"
 #include "generation.h"
+#include "cache.h"
 #include <stdbool.h>
 
 int main()
@@ -10,7 +11,7 @@ int main()
     int n = 8;
     // unsigned int *a = createArray(n);
     unsigned int *a = createMask(n, 3);
-    index i;
+    INDEX i;
     i.x = 4;
     i.y = 0;
     modifyValue(a, i, true);
@@ -22,15 +23,12 @@ int main()
         printf("%d, ", lines->data[i]);
     }
     printf("\nSize: %d\n", lines->size);
-    // printf("\033[0;31m");
-    // for (i.y = 0; i.y < n; i.y++)
-    // {
-    //     for (i.x = 0; i.x < n; i.x++)
-    //     {
-    //         printf("%d ", getValue(a, i));
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\033[0m");
+
+    SizedList test = (SizedList){.size = 3, .data = lines->data};
+    add_entry(&test);
+    long long int hash = hashCode(&test);
+    SizedList *res = find_entry(hash);
+    printf("%d, %d, %d\n", test.data[0], test.data[1], test.data[2]);
+    printf("%d, %d, %d\n", res->data[0], res->data[1], res->data[2]);
     return 0;
 }

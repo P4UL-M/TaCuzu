@@ -29,7 +29,7 @@ def getbit(nb, n):
     return nb >> n & 1
 
 
-K = 14
+K = 8
 A = [i for i in list_lines(K)]
 N = len(A)
 A.sort()

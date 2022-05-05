@@ -62,3 +62,31 @@ SizedList *list_lines(unsigned int size)
     }
     return res_;
 }
+
+SizedList *extend(SizedList *l1, SizedList *l2)
+{
+    SizedList *res = (SizedList *)malloc(sizeof(SizedList));
+    res->size = l1->size + l2->size;
+    res->data = (unsigned int *)malloc(sizeof(unsigned int) * res->size);
+    for (int i = 0; i < l1->size; i++)
+    {
+        res->data[i] = l1->data[i];
+    }
+    for (int i = 0; i < l2->size; i++)
+    {
+        res->data[i + l1->size] = l2->data[i];
+    }
+    return res;
+}
+
+SizedList *copy(SizedList *l)
+{
+    SizedList *res = (SizedList *)malloc(sizeof(SizedList));
+    res->size = l->size;
+    res->data = (unsigned int *)malloc(sizeof(unsigned int) * res->size);
+    for (int i = 0; i < l->size; i++)
+    {
+        res->data[i] = l->data[i];
+    }
+    return res;
+}

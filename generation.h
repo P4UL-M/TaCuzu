@@ -12,5 +12,6 @@ typedef struct
 
 unsigned int *generate_grid(unsigned int size);
 SizedList *list_lines(unsigned int size);
+SizedList *extend(SizedList *l1, SizedList *l2);
 
 #endif
