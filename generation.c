@@ -53,7 +53,7 @@ SizedList *list_lines(unsigned int size)
             cpt++;
         }
     }
-    SizedList *res_ = malloc(sizeof(SizedList));
+    SizedList *res_ = (SizedList *)malloc(sizeof(SizedList));
     res_->size = cpt;
     res_->data = (unsigned int *)malloc(sizeof(unsigned int) * cpt);
     for (int i = 0; i < cpt; i++)
