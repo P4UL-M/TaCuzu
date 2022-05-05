@@ -3,14 +3,16 @@
 #include "data.h"
 #include "grid.h"
 #include "generation.h"
+#include "cache.h"
 #include <stdbool.h>
+#include <math.h>
 
 int main()
 {
     int n = 8;
     // unsigned int *a = createArray(n);
     unsigned int *a = createMask(n, 3);
-    index i;
+    INDEX i;
     i.x = 4;
     i.y = 0;
     modifyValue(a, i, true);
@@ -25,15 +27,19 @@ int main()
         printf("%d, ", lines->data[i]);
     }
     printf("\nSize: %d\n", lines->size);
-    // printf("\033[0;31m");
-    // for (i.y = 0; i.y < n; i.y++)
-    // {
-    //     for (i.x = 0; i.x < n; i.x++)
-    //     {
-    //         printf("%d ", getValue(a, i));
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\033[0m");
+    int k = n;
+    int N = lines->size;
+    int P = pow(2, k + 1) - 2;
+    printf("%d\n", P);
+    ListSizedList *res = knapsack(0, P, k, lines, N);
+    printf("%d\n", res->data[0]->size);
+    for (int j = 0; j < res->size; j++)
+    {
+        for (int i = 0; i < res->data[j]->size; i++)
+        {
+            printf("%d, ", res->data[j]->data[i]);
+        }
+        printf("\n");
+    }
     return 0;
 }

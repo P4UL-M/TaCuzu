@@ -34,7 +34,7 @@ unsigned int *createMask(int size, int difficulty)
 {
     unsigned int *m = createArray(size);
     // difficulty go from 1 to 3
-    index i;
+    INDEX i;
     int difficulties[] = {8, 5, 3};                                                                          // levels of difficulty
     int temp, nb_visible;                                                                                    // get the number of visible cells
     nb_visible = difficulties[difficulty - 1] * (int)pow((double)2, (size / 4 != 1) ? (double)size / 4 : 0); // factor to size of the grid
@@ -53,7 +53,7 @@ unsigned int *createMask(int size, int difficulty)
 
 void displayArray(unsigned int *a, int n)
 {
-    index i;
+    INDEX i;
     int temp;
     for (i.y = 0; i.y < n; i.y++)
     {
