@@ -16,6 +16,9 @@ int main()
     modifyValue(a, i, true);
     // printf("%d\n", getValue(a, i));
     displayArray(a, n);
+    printf("\nTranspose:\n");
+    displayArray(transpose(a, n), n);
+    printf("\nIt's %d\n", checkArray(a, n));
     SizedList *lines = list_lines(n);
     for (int i = 0; i < lines->size; i++)
     {

@@ -6,5 +6,6 @@
 
 unsigned int *createMask(int size, int difficulty);
 void displayArray(unsigned int *a, int n);
+bool checkArray(unsigned int *a, int n);
 
 #endif

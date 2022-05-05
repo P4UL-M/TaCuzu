@@ -44,3 +44,20 @@ bool getValue(unsigned int *a, index i)
 {
     return a[i.y] >> i.x & 1;
 }
+
+unsigned int *transpose(unsigned int *a, int n)
+{
+    unsigned int *t = createArray(n);
+    index i, i_;
+    for (i.y = 0; i.y < n; i.y++)
+    {
+        for (i.x = 0; i.x < n; i.x++)
+        {
+            i_.x = i.y;
+            i_.y = i.x;
+            modifyValue(t, i, getValue(a, i_));     //To get easily the columns
+        }
+        printf("\n");
+    }
+    return t;
+}

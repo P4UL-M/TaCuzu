@@ -14,6 +14,22 @@
 #define ANSI_COLOR_CYAN "\x1b[36m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
+bool getdigit(unsigned int i, int digit)
+{
+    return i >> digit & 1;
+}
+
+int countBits(unsigned int i)
+{
+    int count = 0;
+    while (i != 0)
+    {
+        i &= (i - 1);
+        count++;
+    }
+    return count;
+}
+
 unsigned int *createMask(int size, int difficulty)
 {
     unsigned int *m = createArray(size);
@@ -57,4 +73,56 @@ void displayArray(unsigned int *a, int n)
         printf(ANSI_COLOR_RESET); // reset the color
         printf("\n");
     }
+}
+
+bool checkDouble(unsigned int *a, int n)
+{
+    for (int i = 0; i < n-1; i++)
+    {
+        int temp = a[i];
+        for (int j = i + 1; j < n-1; j++)
+        {
+            if (a[j] == temp)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool checkArray(unsigned int *a, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        int nb = n - 2;
+        for (int digit = 0; digit < nb; digit++)    // check no more than 3 successive identical values
+        {
+            if (getdigit(a[i], digit) == getdigit(a[i], digit + 1) && getdigit(a[i], digit) == getdigit(a[i], digit + 2))
+            {
+                return false;
+            }
+        }
+        if (countBits(a[i]) != n / 2)            // check if there are as many 0s as 1s
+        {
+            return false;
+        }
+    }
+    if (!checkDouble(a, n)){
+        return false;
+    }
+
+    unsigned int *t = transpose(a, n);              // check for the columns
+    for (int i = 0; i < n; i++)
+    {
+        int nb = n - 2;
+        for (int digit = 0; digit < nb; digit++)
+        {
+            if (getdigit(t[i], digit) == getdigit(t[i], digit + 1) && getdigit(t[i], digit) == getdigit(t[i], digit + 2))
+            {
+                return false;
+            }
+        }                                           // no need to check again number of 1s
+    }                                               // same for identical columns
+    return true;
 }
