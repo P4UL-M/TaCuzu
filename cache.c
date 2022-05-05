@@ -20,18 +20,21 @@ long long int hashCode(SizedList *l)
 
 HashEntry *mycache = NULL;
 
-void add_entry(SizedList *l)
+void add_entry(long long int hash, ListSizedList *l)
 {
     HashEntry *s = (HashEntry *)malloc(sizeof(HashEntry));
     s->l = l;
-    s->hash = hashCode(l);
+    s->hash = hash;
     HASH_ADD_INT(mycache, hash, s);
 }
 
-SizedList *find_entry(int hashCode)
+ListSizedList *find_entry(int hashCode)
 {
     HashEntry *s;
-
     HASH_FIND_INT(mycache, &hashCode, s);
-    return s->l;
+    if (s != NULL)
+    {
+        return s->l;
+    }
+    return NULL;
 }

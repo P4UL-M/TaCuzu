@@ -33,7 +33,6 @@ K = 8
 A = [i for i in list_lines(K)]
 N = len(A)
 A.sort()
-M = (1 << N) - 1
 P = 2**(K+1) - 2
 
 print(len(A), P)
@@ -63,6 +62,7 @@ def knapsack(i, target, k):
 
 
 start = time()
+print(knapsack(0, P, K))
 for subset in knapsack(0, P, K):
     print(subset, sum(subset))
 print(round(time() - start, 5))

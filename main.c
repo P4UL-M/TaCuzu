@@ -5,6 +5,7 @@
 #include "generation.h"
 #include "cache.h"
 #include <stdbool.h>
+#include <math.h>
 
 int main()
 {
@@ -23,12 +24,19 @@ int main()
         printf("%d, ", lines->data[i]);
     }
     printf("\nSize: %d\n", lines->size);
-
-    SizedList test = (SizedList){.size = 3, .data = lines->data};
-    add_entry(&test);
-    long long int hash = hashCode(&test);
-    SizedList *res = find_entry(hash);
-    printf("%d, %d, %d\n", test.data[0], test.data[1], test.data[2]);
-    printf("%d, %d, %d\n", res->data[0], res->data[1], res->data[2]);
+    int k = n;
+    int N = lines->size;
+    int P = pow(2, k + 1) - 2;
+    printf("%d\n", P);
+    ListSizedList *res = knapsack(0, P, k, lines, N);
+    printf("%d\n", res->data[0]->size);
+    for (int j = 0; j < res->size; j++)
+    {
+        for (int i = 0; i < res->data[j]->size; i++)
+        {
+            printf("%d, ", res->data[j]->data[i]);
+        }
+        printf("\n");
+    }
     return 0;
 }

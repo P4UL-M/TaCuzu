@@ -8,12 +8,12 @@
 typedef struct
 {
     long long int hash;
-    SizedList *l;
+    ListSizedList *l;
     UT_hash_handle hh;
 } HashEntry;
 
 long long int hashCode(SizedList *l);
-void add_entry(SizedList *l);
-SizedList *find_entry(int hashCode);
+void add_entry(long long int hash, ListSizedList *l);
+ListSizedList *find_entry(int hashCode);
 
 #endif
