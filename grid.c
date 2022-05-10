@@ -75,6 +75,37 @@ void displayArray(unsigned int *a, int n)
     }
 }
 
+void displayUser(unsigned int *sol, unsigned int *mask, int n)
+{
+    INDEX i;
+    int temp;
+    for (i.y = 0; i.y < n; i.y++)
+    {
+        for (i.x = n - 1; i.x >= 0; i.x--)
+        {
+            if (getValue(mask, i))
+            {
+                temp = getValue(sol, i);
+                if (temp)
+                {
+                    printf(ANSI_COLOR_RED);
+                }
+                else
+                {
+                    printf(ANSI_COLOR_BLUE);
+                }
+                printf("%d", getValue(sol, i));
+            }
+            else
+            {
+                printf(" ");
+            }
+        }
+        printf(ANSI_COLOR_RESET);
+        printf("\n");
+    }
+}
+
 bool checkDouble(unsigned int *a, int n)
 {
     for (int i = 0; i < n - 1; i++)
@@ -125,4 +156,45 @@ bool checkArray(unsigned int *a, int n)
         } // no need to check again number of 1s
     }     // same for identical columns
     return true;
+}
+
+INDEX Obtainable(unsigned int *sol, unsigned int *mask, int n)
+{
+    INDEX index;
+    for (int i = 0; i < n; i++)
+    {
+        for (int digit = 1; digit < n - 1; digit++)
+        {
+            if (getdigit(sol[i], digit-1) == getdigit(sol[i], digit) && 1 == getdigit(mask[i], digit - 1) && getdigit(mask[i], digit) == 1)
+            {
+                if (getdigit(mask[i], digit + 1) != 1 && digit + 1 < n)
+                {
+                    index.y = i;
+                    index.x = digit + 1;
+                    printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
+                    return index; // Because grid inverted
+                }
+                if (digit > 1)
+                {
+                    if (getdigit(mask[i], digit - 1) != 1)
+                    {
+                        index.y = i;
+                        index.x = digit - 1;
+                        printf("After two %ds, there can only be a %d\n", !getdigit(sol[i], digit), getdigit(sol[i], digit));
+                        return index;
+                    }
+                }
+            }
+            if (getdigit(sol[i], digit - 1) == getdigit(sol[i], digit + 1) && 1 == getdigit(mask[i], digit - 1) && getdigit(mask[i], digit + 1) == 1)
+            {
+                if (getdigit(mask[i], digit) != 1)
+                {
+                    index.x = digit;
+                    index.y = i;
+                    printf("Between two %ds, there can only be a %d\n", getdigit(sol[i], digit-1), !getdigit(sol[i], digit-1));
+                    return index;
+                }
+            }
+        } // Still need to check doubles and numbers of values
+    }
 }
