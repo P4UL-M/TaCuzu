@@ -10,7 +10,7 @@ int starty = 0;
 char *choices[] = {
     "Choice 1",
     "Choice 2",
-    "Choice 3",
+    "generate grid",
     "Choice 4",
     "Exit",
 };

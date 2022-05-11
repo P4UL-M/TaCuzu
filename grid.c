@@ -57,7 +57,7 @@ void displayArray(unsigned int *a, int n)
     int temp;
     for (i.y = 0; i.y < n; i.y++)
     {
-        for (i.x = n - 1; i.x >= 0; i.x--)
+        for (i.x = 0; i.x < n; i.x++)
         {
             temp = getValue(a, i);
             if (temp) // change color of the cell depending on the value
@@ -81,7 +81,7 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
     int temp;
     for (i.y = 0; i.y < n; i.y++)
     {
-        for (i.x = n - 1; i.x >= 0; i.x--)
+        for (i.x = 0; i.x < n; i.x++)
         {
             if (getValue(mask, i))
             {
@@ -158,19 +158,19 @@ bool checkArray(unsigned int *a, int n)
     return true;
 }
 
-INDEX Obtainable(unsigned int *sol, unsigned int *mask, int n)
+INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
 {
-    INDEX index;
+    INDEX *index = (INDEX *)malloc(sizeof(INDEX));
     for (int i = 0; i < n; i++)
     {
         for (int digit = 1; digit < n - 1; digit++)
         {
-            if (getdigit(sol[i], digit-1) == getdigit(sol[i], digit) && 1 == getdigit(mask[i], digit - 1) && getdigit(mask[i], digit) == 1)
+            if (getdigit(sol[i], digit - 1) == getdigit(sol[i], digit) && 1 == getdigit(mask[i], digit - 1) && getdigit(mask[i], digit) == 1)
             {
                 if (getdigit(mask[i], digit + 1) != 1 && digit + 1 < n)
                 {
-                    index.y = i;
-                    index.x = digit + 1;
+                    index->y = i;
+                    index->x = digit + 1;
                     printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
                     return index; // Because grid inverted
                 }
@@ -178,8 +178,8 @@ INDEX Obtainable(unsigned int *sol, unsigned int *mask, int n)
                 {
                     if (getdigit(mask[i], digit - 1) != 1)
                     {
-                        index.y = i;
-                        index.x = digit - 1;
+                        index->y = i;
+                        index->x = digit - 1;
                         printf("After two %ds, there can only be a %d\n", !getdigit(sol[i], digit), getdigit(sol[i], digit));
                         return index;
                     }
@@ -189,12 +189,14 @@ INDEX Obtainable(unsigned int *sol, unsigned int *mask, int n)
             {
                 if (getdigit(mask[i], digit) != 1)
                 {
-                    index.x = digit;
-                    index.y = i;
-                    printf("Between two %ds, there can only be a %d\n", getdigit(sol[i], digit-1), !getdigit(sol[i], digit-1));
+                    index->x = digit;
+                    index->y = i;
+                    printf("Between two %ds, there can only be a %d\n", getdigit(sol[i], digit - 1), !getdigit(sol[i], digit - 1));
                     return index;
                 }
             }
-        } // Still need to check doubles and numbers of values
+        }
+        // Still need to checks numbers of values
     }
+    return NULL;
 }

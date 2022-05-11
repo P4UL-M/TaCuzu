@@ -10,44 +10,50 @@
 int main()
 {
     int n = 8;
-    unsigned int *a = createArray(n);
+    unsigned int *a = generate_grid(n);
     unsigned int *m = createMask(n, 1);
-    INDEX i;
-    i.x = 4;
-    i.y = 0;
-    //modifyValue(a, i, true);
-    // printf("%d\n", getValue(a, i));
-    //displayArray(a, n);
-    //printf("\nTranspose:\n");
-    //displayArray(transpose(a, n), n);
-    //printf("\nIt's %d\n", checkArray(a, n));
-
-    a = generate_grid(n);
-    //printf("%d\n", checkArray(a, n));
-    //displayArray(a, n);
-    //displayArray(m, n);
+    INDEX *i;
+    i = (INDEX *)malloc(sizeof(INDEX));
+    i->x = 4;
+    i->y = 0;
 
     displayUser(a, m, n);
+    int cpt;
+    for (cpt = 0; cpt < 30; cpt++)
+    {
+        free(i);
+        i = Obtainable(a, m, n);
+        if (i != NULL)
+        {
+            printf("%d, %d\n", i->x, i->y);
+            modifyValue(m, *i, true);
+            displayUser(a, m, n);
+        }
+        else
+        {
+            unsigned int *t = transpose(a, n);
+            unsigned int *t_mask = transpose(m, n);
+            free(i);
+            i = Obtainable(t, t_mask, n);
+            free(t);
+            free(t_mask);
+            if (i != NULL)
+            {
+                int temp = i->x;
+                i->x = i->y;
+                i->y = temp;
 
-    i = Obtainable(a, m, n);
-    printf("%d, %d\n", i.x, i.y);
-    modifyValue(m, i, true);
-    displayUser(a, m, n);
-
-    //for (int i = 0; i < 100; i++)
-    //{
-    //    a = generate_grid(n);
-    //    if (checkArray(a, n))
-    //    {
-    //        displayArray(a, n);
-            //break;
-    //    }
-    //    else
-    //    {
-    //        printf("%d\n", i);
-    //    }
-    //    free(a);
-    //}
+                printf("in transpose %d, %d\n", i->x, i->y);
+                modifyValue(m, *i, true);
+                displayUser(a, m, n);
+            }
+            else
+            {
+                printf("No more possible after %d resolutions\n", cpt);
+            }
+        }
+    }
+    printf("%d\n", cpt);
 
     return 0;
 }
