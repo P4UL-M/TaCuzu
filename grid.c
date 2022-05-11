@@ -35,7 +35,7 @@ unsigned int *createMask(int size, int difficulty)
     unsigned int *m = createArray(size);
     // difficulty go from 1 to 3
     INDEX i;
-    int difficulties[] = {8, 5, 3};                                                                          // levels of difficulty
+    int difficulties[] = {10, 5, 3};                                                                         // levels of difficulty
     int temp, nb_visible;                                                                                    // get the number of visible cells
     nb_visible = difficulties[difficulty - 1] * (int)pow((double)2, (size / 4 != 1) ? (double)size / 4 : 0); // factor to size of the grid
     srand(time(NULL));                                                                                       // seed the random generator
@@ -153,8 +153,60 @@ bool checkArray(unsigned int *a, int n)
             {
                 return false;
             }
+        }
+        if (countBits(t[i]) != n / 2) // check if there are as many 0s as 1s
+        {
+            return false;
+        }
+    }
+    if (!checkDouble(t, n))
+    {
+        return false;
+    }
+    return true;
+}
+
+bool checkValid(unsigned int *a, unsigned int *mask, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        int nb = n - 2;
+        for (int digit = 0; digit < nb; digit++) // check no more than 3 successive identical values
+        {
+            if (getdigit(mask[i], digit) && getdigit(mask[i], digit + 1) && getdigit(mask[i], digit + 2))
+            {
+                if (getdigit(a[i], digit) == getdigit(a[i], digit + 1) && getdigit(a[i], digit) == getdigit(a[i], digit + 2))
+                {
+                    return false;
+                }
+            }
+        }
+        if (countBits(a[i]) != n / 2) // check if there are as many 0s as 1s
+        {
+            return false;
+        }
+    }
+    if (!checkDouble(a, n))
+    {
+        return false;
+    }
+
+    unsigned int *t = transpose(a, n); // check for the columns
+    for (int i = 0; i < n; i++)
+    {
+        int nb = n - 2;
+        for (int digit = 0; digit < nb; digit++)
+        {
+            if (getdigit(mask[i], digit) && getdigit(mask[i], digit + 1) && getdigit(mask[i], digit + 2))
+            {
+                if (getdigit(a[i], digit) == getdigit(a[i], digit + 1) && getdigit(a[i], digit) == getdigit(a[i], digit + 2))
+                {
+                    return false;
+                }
+            }
         } // no need to check again number of 1s
     }     // same for identical columns
+
     return true;
 }
 
@@ -196,7 +248,46 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                 }
             }
         }
-        // Still need to checks numbers of values
+        if (countBits(mask[i]) == n - 1) // check number of values
+        {
+            printf("%d on line %d\n", countBits(mask[i]), i);
+            index->y = i;
+            while (getdigit(mask[i], index->x) == 1)
+            {
+                index->x++;
+            }
+            printf("There can only be one value for %d,%d since line is missing only 1 value\n", index->x, index->y);
+            return index;
+        }
+        if (countBits(mask[i]) == n - 2) // check doublons
+        {
+            for (int lines = 0; lines < n; lines++)
+            {
+                if (countBits(mask[lines]) == n && i != lines)
+                {
+                    bool isdouble = true;
+                    for (int digit = 1; digit < n; digit++)
+                    {
+                        if (getdigit(sol[i], digit) != getdigit(sol[lines], digit) && 1 == getdigit(mask[i], digit) && 1 == getdigit(mask[lines], digit))
+                        {
+                            isdouble = false;
+                            break;
+                        }
+                    }
+                    // check if lines who could be a double if we add wrong value
+                    if (isdouble)
+                    {
+                        index->y = i;
+                        while (getdigit(mask[i], index->x) == 1)
+                        {
+                            index->x++;
+                        }
+                        printf("There can only be one value for %d,%d since line %d would be a double of actual line\n", index->x, index->y, lines);
+                        return index;
+                    }
+                }
+            }
+        }
     }
     return NULL;
 }

@@ -6,11 +6,16 @@
 #include "cache.h"
 #include <stdbool.h>
 #include <math.h>
+#include <time.h>
 
 int main()
 {
     int n = 8;
+    clock_t t;
+    t = clock();
     unsigned int *a = generate_grid(n);
+    t = clock() - t;
+    printf("Generation time: %f\n", ((float)t) / CLOCKS_PER_SEC);
     unsigned int *m = createMask(n, 1);
     INDEX *i;
     i = (INDEX *)malloc(sizeof(INDEX));
@@ -25,6 +30,7 @@ int main()
         i = Obtainable(a, m, n);
         if (i != NULL)
         {
+            printf("not in transpose %d, %d\n", i->x, i->y);
             printf("%d, %d\n", i->x, i->y);
             modifyValue(m, *i, true);
             displayUser(a, m, n);
