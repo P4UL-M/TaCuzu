@@ -167,22 +167,12 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
         {
             if (getdigit(sol[i], digit - 1) == getdigit(sol[i], digit) && 1 == getdigit(mask[i], digit - 1) && getdigit(mask[i], digit) == 1)
             {
-                if (getdigit(mask[i], digit + 1) != 1 && digit + 1 < n)
+                if (getdigit(mask[i], digit + 1) != 1)
                 {
                     index->y = i;
                     index->x = digit + 1;
-                    printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
+                    printf("After two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
                     return index; // Because grid inverted
-                }
-                if (digit > 1)
-                {
-                    if (getdigit(mask[i], digit - 1) != 1)
-                    {
-                        index->y = i;
-                        index->x = digit - 1;
-                        printf("After two %ds, there can only be a %d\n", !getdigit(sol[i], digit), getdigit(sol[i], digit));
-                        return index;
-                    }
                 }
             }
             if (getdigit(sol[i], digit - 1) == getdigit(sol[i], digit + 1) && 1 == getdigit(mask[i], digit - 1) && getdigit(mask[i], digit + 1) == 1)
@@ -193,6 +183,16 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                     index->y = i;
                     printf("Between two %ds, there can only be a %d\n", getdigit(sol[i], digit - 1), !getdigit(sol[i], digit - 1));
                     return index;
+                }
+            }
+            if (getdigit(sol[i], digit) == getdigit(sol[i], digit + 1) && 1 == getdigit(mask[i], digit) && getdigit(mask[i], digit + 1) == 1)
+            {
+                if (getdigit(mask[i], digit - 1) != 1)
+                {
+                    index->y = i;
+                    index->x = digit - 1;
+                    printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
+                    return index; // Because grid inverted
                 }
             }
         }
