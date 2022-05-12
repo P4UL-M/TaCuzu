@@ -4,13 +4,14 @@
 #include "grid.h"
 #include "generation.h"
 #include "cache.h"
+#include "user.h"
 #include <stdbool.h>
 #include <math.h>
 #include <time.h>
 
 int main()
 {
-    int n = 8;
+    /*int n = 8;
     clock_t t;
     t = clock();
     unsigned int *a = generate_grid(n);
@@ -63,7 +64,8 @@ int main()
             }
         }
     }
-    printf("%d\n", cpt);
+    printf("%d\n", cpt);*/
+    test();
 
     return 0;
 }
