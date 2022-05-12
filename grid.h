@@ -7,7 +7,7 @@
 unsigned int *createMask(int size, int difficulty);
 void displayArray(unsigned int *a, int n);
 bool checkArray(unsigned int *a, int n);
-bool checkValid(unsigned int *a, unsigned int *mask, int n);
+bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug);
 int countBits(unsigned int i);
 bool checkDouble(unsigned int *a, int n);
 INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n, bool debug);

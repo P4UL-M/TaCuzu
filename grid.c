@@ -181,7 +181,7 @@ bool checkArray(unsigned int *a, int n)
     return true;
 }
 
-bool checkValid(unsigned int *a, unsigned int *mask, int n)
+bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
 {
     // check for lines
     for (int i = 0; i < n; i++)
@@ -193,16 +193,22 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n)
             {
                 if (getdigit(a[i], digit) == getdigit(a[i], digit + 1) && getdigit(a[i], digit) == getdigit(a[i], digit + 2))
                 {
+                    if (debug)
+                        printf("you can't put 3 %d in serie.\n", getdigit(a[i], digit));
                     return false;
                 }
             }
         }
         if (countBits(a[i] & mask[i]) > (n / 2)) // check if more than half of the cells wich are 1 and visible
         {
+            if (debug)
+                printf("you can't put more than half of the cells of 1.\n");
             return false;
         }
         if (countBits(~a[i] & mask[i]) > (n / 2)) // check if more than half of the cells wich are 0 and visible
         {
+            if (debug)
+                printf("you can't put more than half of the cells of 0.\n");
             return false;
         }
         if (countBits(mask[i]) == n - 1) // check number of values
@@ -223,6 +229,8 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n)
                     // check if lines who could be a double if we add wrong value
                     if (isdouble)
                     {
+                        if (debug)
+                            printf("you can't put more than half of same value on one line.\n");
                         return false;
                     }
                 }
@@ -240,16 +248,22 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n)
             {
                 if (getdigit(t[i], digit) == getdigit(t[i], digit + 1) && getdigit(t[i], digit) == getdigit(t[i], digit + 2))
                 {
+                    if (debug)
+                        printf("you can't put 3 %d in serie.\n", getdigit(a[i], digit));
                     return false;
                 }
             }
         }
         if (countBits(t[i] & tm[i]) > (n / 2)) // check if more than half of the cells wich are 1 and visible
         {
+            if (debug)
+                printf("you can't put more than half of the cells of 1.\n");
             return false;
         }
         if (countBits(~t[i] & tm[i]) > (n / 2)) // check if more than half of the cells wich are 0 and visible
         {
+            if (debug)
+                printf("you can't put more than half of the cells of 0.\n");
             return false;
         }
         if (countBits(tm[i]) == n - 1) // check number of values
@@ -270,6 +284,8 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n)
                     // check if lines who could be a double if we add wrong value
                     if (isdouble)
                     {
+                        if (debug)
+                            printf("you can't put more than half of same value on one line.\n");
                         return false;
                     }
                 }
@@ -445,7 +461,7 @@ INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index, boo
     }
     modifyValue(hyp, index, true);
     modifyValue(hyp_mask, index, true);
-    while (checkValid(hyp, hyp_mask, n))
+    while (checkValid(hyp, hyp_mask, n, false))
     {
         INDEX *id = Obtainable2D(hyp, hyp_mask, n, false);
         if (id == NULL)
@@ -467,7 +483,7 @@ INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index, boo
         modifyValue(hyp_mask, *id, true);
         // set the value to the hypothesis
         modifyValue(hyp, *id, true);
-        if (!checkValid(hyp, hyp_mask, n))
+        if (!checkValid(hyp, hyp_mask, n, false))
         {
             modifyValue(hyp, *id, false);
         }
