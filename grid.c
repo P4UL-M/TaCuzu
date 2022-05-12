@@ -35,7 +35,7 @@ unsigned int *createMask(int size, int difficulty)
     unsigned int *m = createArray(size);
     // difficulty go from 1 to 3
     INDEX i;
-    int difficulties[] = {10, 5, 3};                                                                         // levels of difficulty
+    int difficulties[] = {8, 5, 3};                                                                          // levels of difficulty
     int temp, nb_visible;                                                                                    // get the number of visible cells
     nb_visible = difficulties[difficulty - 1] * (int)pow((double)2, (size / 4 != 1) ? (double)size / 4 : 0); // factor to size of the grid
     srand(time(NULL));                                                                                       // seed the random generator
@@ -280,7 +280,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n)
     return true;
 }
 
-INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
+INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
 {
     INDEX *index = (INDEX *)malloc(sizeof(INDEX));
     for (int i = 0; i < n; i++)
@@ -293,7 +293,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                 {
                     index->y = i;
                     index->x = digit + 1;
-                    printf("After two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
+                    if (debug)
+                        printf("After two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
                     return index; // Because grid inverted
                 }
             }
@@ -303,7 +304,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                 {
                     index->x = digit;
                     index->y = i;
-                    printf("Between two %ds, there can only be a %d\n", getdigit(sol[i], digit - 1), !getdigit(sol[i], digit - 1));
+                    if (debug)
+                        printf("Between two %ds, there can only be a %d\n", getdigit(sol[i], digit - 1), !getdigit(sol[i], digit - 1));
                     return index;
                 }
             }
@@ -313,7 +315,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                 {
                     index->y = i;
                     index->x = digit - 1;
-                    printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
+                    if (debug)
+                        printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
                     return index; // Because grid inverted
                 }
             }
@@ -326,7 +329,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
             {
                 index->x++;
             }
-            printf("There can only be %d 1 on line/columns %d\n", n / 2, index->y);
+            if (debug)
+                printf("There can only be %d 1 on line/columns %d\n", n / 2, index->y);
             return index;
         }
         if (countBits(~sol[i] & mask[i]) == n / 2 && countBits(mask[i]) < n)
@@ -337,19 +341,20 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
             {
                 index->x++;
             }
-            printf("There can only be %d 0 on line/columns %d\n", n / 2, index->y);
+            if (debug)
+                printf("There can only be %d 0 on line/columns %d\n", n / 2, index->y);
             return index;
         }
         if (countBits(mask[i]) == n - 1) // check number of values
         {
-            printf("%d on line %d\n", countBits(mask[i]), i);
             index->y = i;
             index->x = 0;
             while (getdigit(mask[i], index->x) == 1)
             {
                 index->x++;
             }
-            printf("There can only be one value for %d,%d since line is missing only 1 value\n", index->x, index->y);
+            if (debug)
+                printf("There can only be one value for %d,%d since line is missing only 1 value\n", index->x, index->y);
             return index;
         }
         if (countBits(mask[i]) == n - 2) // check doublons
@@ -376,7 +381,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                         {
                             index->x++;
                         }
-                        printf("There can only be one value for %d,%d since line %d would be a double of actual line\n", index->x, index->y, lines);
+                        if (debug)
+                            printf("There can only be one value for %d,%d since line/column %d would be a double of actual line/column\n", index->x, index->y, lines);
                         return index;
                     }
                 }
@@ -386,9 +392,9 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
     return NULL;
 }
 
-INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n)
+INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n, bool debug)
 {
-    INDEX *index = Obtainable(sol, mask, n);
+    INDEX *index = Obtainable(sol, mask, n, debug);
     if (index != NULL)
     {
         return index;
@@ -397,7 +403,7 @@ INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n)
     {
         unsigned int *t = transpose(sol, n);
         unsigned int *t_mask = transpose(mask, n);
-        index = Obtainable(t, t_mask, n);
+        index = Obtainable(t, t_mask, n, debug);
         free(t);
         free(t_mask);
         if (index != NULL)
@@ -410,9 +416,8 @@ INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n)
     }
 }
 
-INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index)
+INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index, bool debug)
 {
-    printf("starting with index %d,%d\n", index.x, index.y);
     // get next free index
     while (getValue(mask, index) == 1)
     {
@@ -428,7 +433,6 @@ INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index)
         }
     }
     // copy of the grid
-    printf("index free found at %d,%d\n", index.x, index.y);
     unsigned int *hyp = (unsigned int *)malloc(sizeof(unsigned int) * n);
     unsigned int *hyp_mask = (unsigned int *)malloc(sizeof(unsigned int) * n);
     for (int i = 0; i < n; i++)
@@ -441,26 +445,11 @@ INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index)
     }
     modifyValue(hyp, index, true);
     modifyValue(hyp_mask, index, true);
-    printf("Hypothesis: %d,%d\n", index.x, index.y);
     while (checkValid(hyp, hyp_mask, n))
     {
-        printf("Getting value\n");
-        INDEX *id = Obtainable2D(hyp, hyp_mask, n);
+        INDEX *id = Obtainable2D(hyp, hyp_mask, n, false);
         if (id == NULL)
         {
-            printf("no value with %d, %d\n", sum(hyp_mask, n), (int)(pow(2, (n - 1)) * n));
-            displayUser(hyp, hyp_mask, n);
-            INDEX *temp = Obtainable2D(hyp, hyp_mask, n);
-            if (temp == NULL)
-            {
-                printf("index null\n");
-            }
-            else
-            {
-                printf("index not null\n");
-            }
-            printf("\n");
-            displayUser(sol, mask, n);
             // we can't solve the grid with the current hypothesis
             index.x++;
             if (index.x == n)
@@ -472,7 +461,7 @@ INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index)
                     return NULL;
                 }
             }
-            return Hypothesis(sol, mask, n, index);
+            return Hypothesis(sol, mask, n, index, debug);
         }
         // unlock the mask
         modifyValue(hyp_mask, *id, true);
@@ -480,19 +469,59 @@ INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index)
         modifyValue(hyp, *id, true);
         if (!checkValid(hyp, hyp_mask, n))
         {
-            printf("that was other value\n");
             modifyValue(hyp, *id, false);
         }
-        printf("value at %d, %d\n", id->x, id->y);
-        displayUser(hyp, hyp_mask, n);
         if (sum(hyp_mask, n) == (int)((pow(2, n) - 1) * n))
         {
-            printf("Hypothesis is valid\n");
             break;
         }
     }
     INDEX *res = (INDEX *)malloc(sizeof(INDEX));
     res->x = index.x;
     res->y = index.y;
+    if (debug)
+        printf("By putting an Hypothesis at %d,%d we can lock the value.\n", index.x, index.y);
     return res;
+}
+
+bool solvable(unsigned int *array, unsigned int *mask_og, int n)
+{
+    unsigned int *sol = (unsigned int *)malloc(sizeof(unsigned int) * n);
+    for (int i = 0; i < n; i++)
+    {
+        sol[i] = array[i];
+    }
+    unsigned int *mask = (unsigned int *)malloc(sizeof(unsigned int) * n);
+    for (int i = 0; i < n; i++)
+    {
+        mask[i] = mask_og[i];
+    }
+    INDEX *i;
+    while (sum(mask, n) != (int)((pow(2, n) - 1) * n))
+    {
+        i = Obtainable2D(sol, mask, n, false);
+        if (i != NULL)
+        {
+            modifyValue(mask, *i, true);
+            free(i);
+        }
+        else
+        {
+            INDEX temp;
+            temp.x = 0;
+            temp.y = 0;
+            i = Hypothesis(sol, mask, n, temp, false);
+            if (i != NULL)
+            {
+                modifyValue(mask, *i, true);
+                free(i);
+            }
+            else
+            {
+                bool res = false;
+                return res;
+            }
+        }
+    }
+    return true;
 }
