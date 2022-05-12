@@ -11,13 +11,22 @@
 
 int main()
 {
-    /*int n = 4;
+    /*int n = 8;
     clock_t t;
     t = clock();
     unsigned int *a = generate_grid(n);
     t = clock() - t;
     printf("Generation time: %f\n", ((float)t) / CLOCKS_PER_SEC);
     unsigned int *m = createMask(n, 1);
+    while (!solvable(a, m, n))
+    {
+        printf("Generation failed\n");
+        free(m);
+        m = createMask(n, 1);
+    }
+    displayUser(a, m, n);
+    return 0;
+
     INDEX *i;
     i = (INDEX *)malloc(sizeof(INDEX));
     i->x = 4;
@@ -25,10 +34,10 @@ int main()
 
     displayUser(a, m, n);
     int cpt;
-    for (cpt = 0; cpt < 30; cpt++)
+    for (cpt = 0; cpt < 32; cpt++)
     {
         free(i);
-        i = Obtainable(a, m, n);
+        i = Obtainable2D(a, m, n, true);
         if (i != NULL)
         {
             printf("not in transpose %d, %d\n", i->x, i->y);
@@ -38,24 +47,19 @@ int main()
         }
         else
         {
-            unsigned int *t = transpose(a, n);
-            unsigned int *t_mask = transpose(m, n);
-            free(i);
-            i = Obtainable(t, t_mask, n);
-            free(t);
-            free(t_mask);
+            INDEX temp;
+            temp.x = 0;
+            temp.y = 0;
+            i = Hypothesis(a, m, n, temp, true);
             if (i != NULL)
             {
-                int temp = i->x;
-                i->x = i->y;
-                i->y = temp;
-
-                printf("in transpose %d, %d\n", i->x, i->y);
+                printf("HYPOTHESISSSSS %d, %d\n", i->x, i->y);
                 modifyValue(m, *i, true);
                 displayUser(a, m, n);
             }
             else
             {
+
                 printf("No more possible after %d resolutions\n", cpt);
             }
         }

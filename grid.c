@@ -35,7 +35,7 @@ unsigned int *createMask(int size, int difficulty)
     unsigned int *m = createArray(size);
     // difficulty go from 1 to 3
     INDEX i;
-    int difficulties[] = {10, 5, 3};                                                                         // levels of difficulty
+    int difficulties[] = {8, 5, 3};                                                                          // levels of difficulty
     int temp, nb_visible;                                                                                    // get the number of visible cells
     nb_visible = difficulties[difficulty - 1] * (int)pow((double)2, (size / 4 != 1) ? (double)size / 4 : 0); // factor to size of the grid
     srand(time(NULL));                                                                                       // seed the random generator
@@ -121,6 +121,21 @@ bool checkDouble(unsigned int *a, int n)
     return true;
 }
 
+bool checkDoubleMask(unsigned int *a, unsigned int *mask, int n)
+{
+    for (int i = 0; i < n - 1; i++)
+    { // read comment by @nbro
+        for (int j = i + 1; j < n; j++)
+        {
+            if (a[i] == a[j] && countBits(mask[i] & mask[j]) == n)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 bool checkArray(unsigned int *a, int n)
 {
     for (int i = 0; i < n; i++)
@@ -168,6 +183,7 @@ bool checkArray(unsigned int *a, int n)
 
 bool checkValid(unsigned int *a, unsigned int *mask, int n)
 {
+    // check for lines
     for (int i = 0; i < n; i++)
     {
         int nb = n - 2;
@@ -181,36 +197,90 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n)
                 }
             }
         }
-        if (countBits(a[i]) != n / 2) // check if there are as many 0s as 1s
+        if (countBits(a[i] & mask[i]) > (n / 2)) // check if more than half of the cells wich are 1 and visible
         {
             return false;
         }
+        if (countBits(~a[i] & mask[i]) > (n / 2)) // check if more than half of the cells wich are 0 and visible
+        {
+            return false;
+        }
+        if (countBits(mask[i]) == n - 1) // check number of values
+        {
+            for (int lines = 0; lines < n; lines++)
+            {
+                if (countBits(mask[lines]) == n && i != lines)
+                {
+                    bool isdouble = true;
+                    for (int digit = 1; digit < n; digit++)
+                    {
+                        if (getdigit(a[i], digit) != getdigit(a[lines], digit) && 1 == getdigit(mask[i], digit) && 1 == getdigit(mask[lines], digit))
+                        {
+                            isdouble = false;
+                            break;
+                        }
+                    }
+                    // check if lines who could be a double if we add wrong value
+                    if (isdouble)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
     }
-    if (!checkDouble(a, n))
-    {
-        return false;
-    }
-
     unsigned int *t = transpose(a, n); // check for the columns
+    unsigned int *tm = transpose(mask, n);
     for (int i = 0; i < n; i++)
     {
         int nb = n - 2;
-        for (int digit = 0; digit < nb; digit++)
+        for (int digit = 0; digit < nb; digit++) // check no more than 3 successive identical values
         {
-            if (getdigit(mask[i], digit) && getdigit(mask[i], digit + 1) && getdigit(mask[i], digit + 2))
+            if (getdigit(tm[i], digit) && getdigit(tm[i], digit + 1) && getdigit(tm[i], digit + 2))
             {
-                if (getdigit(a[i], digit) == getdigit(a[i], digit + 1) && getdigit(a[i], digit) == getdigit(a[i], digit + 2))
+                if (getdigit(t[i], digit) == getdigit(t[i], digit + 1) && getdigit(t[i], digit) == getdigit(t[i], digit + 2))
                 {
                     return false;
                 }
             }
-        } // no need to check again number of 1s
-    }     // same for identical columns
-
+        }
+        if (countBits(t[i] & tm[i]) > (n / 2)) // check if more than half of the cells wich are 1 and visible
+        {
+            return false;
+        }
+        if (countBits(~t[i] & tm[i]) > (n / 2)) // check if more than half of the cells wich are 0 and visible
+        {
+            return false;
+        }
+        if (countBits(tm[i]) == n - 1) // check number of values
+        {
+            for (int lines = 0; lines < n; lines++)
+            {
+                if (countBits(tm[lines]) == n && i != lines)
+                {
+                    bool isdouble = true;
+                    for (int digit = 1; digit < n; digit++)
+                    {
+                        if (getdigit(t[i], digit) != getdigit(t[lines], digit) && 1 == getdigit(tm[i], digit) && 1 == getdigit(tm[lines], digit))
+                        {
+                            isdouble = false;
+                            break;
+                        }
+                    }
+                    // check if lines who could be a double if we add wrong value
+                    if (isdouble)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    // return true since no error was found
     return true;
 }
 
-INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
+INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
 {
     INDEX *index = (INDEX *)malloc(sizeof(INDEX));
     for (int i = 0; i < n; i++)
@@ -223,7 +293,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                 {
                     index->y = i;
                     index->x = digit + 1;
-                    printf("After two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
+                    if (debug)
+                        printf("After two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
                     return index; // Because grid inverted
                 }
             }
@@ -233,7 +304,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                 {
                     index->x = digit;
                     index->y = i;
-                    printf("Between two %ds, there can only be a %d\n", getdigit(sol[i], digit - 1), !getdigit(sol[i], digit - 1));
+                    if (debug)
+                        printf("Between two %ds, there can only be a %d\n", getdigit(sol[i], digit - 1), !getdigit(sol[i], digit - 1));
                     return index;
                 }
             }
@@ -243,7 +315,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                 {
                     index->y = i;
                     index->x = digit - 1;
-                    printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
+                    if (debug)
+                        printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
                     return index; // Because grid inverted
                 }
             }
@@ -256,7 +329,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
             {
                 index->x++;
             }
-            printf("There can only be %d 1 on line/columns %d\n", n / 2, index->y);
+            if (debug)
+                printf("There can only be %d 1 on line/columns %d\n", n / 2, index->y);
             return index;
         }
         if (countBits(~sol[i] & mask[i]) == n / 2 && countBits(mask[i]) < n)
@@ -267,19 +341,20 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
             {
                 index->x++;
             }
-            printf("There can only be %d 0 on line/columns %d\n", n / 2, index->y);
+            if (debug)
+                printf("There can only be %d 0 on line/columns %d\n", n / 2, index->y);
             return index;
         }
         if (countBits(mask[i]) == n - 1) // check number of values
         {
-            printf("%d on line %d\n", countBits(mask[i]), i);
             index->y = i;
             index->x = 0;
             while (getdigit(mask[i], index->x) == 1)
             {
                 index->x++;
             }
-            printf("There can only be one value for %d,%d since line is missing only 1 value\n", index->x, index->y);
+            if (debug)
+                printf("There can only be one value for %d,%d since line is missing only 1 value\n", index->x, index->y);
             return index;
         }
         if (countBits(mask[i]) == n - 2) // check doublons
@@ -306,7 +381,8 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                         {
                             index->x++;
                         }
-                        printf("There can only be one value for %d,%d since line %d would be a double of actual line\n", index->x, index->y, lines);
+                        if (debug)
+                            printf("There can only be one value for %d,%d since line/column %d would be a double of actual line/column\n", index->x, index->y, lines);
                         return index;
                     }
                 }
@@ -314,4 +390,138 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
         }
     }
     return NULL;
+}
+
+INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n, bool debug)
+{
+    INDEX *index = Obtainable(sol, mask, n, debug);
+    if (index != NULL)
+    {
+        return index;
+    }
+    else
+    {
+        unsigned int *t = transpose(sol, n);
+        unsigned int *t_mask = transpose(mask, n);
+        index = Obtainable(t, t_mask, n, debug);
+        free(t);
+        free(t_mask);
+        if (index != NULL)
+        {
+            unsigned int temp = index->y;
+            index->y = index->x;
+            index->x = temp;
+        }
+        return index;
+    }
+}
+
+INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index, bool debug)
+{
+    // get next free index
+    while (getValue(mask, index) == 1)
+    {
+        index.x++;
+        if (index.x == n)
+        {
+            index.x = 0;
+            index.y++;
+            if (index.y == n)
+            {
+                return NULL;
+            }
+        }
+    }
+    // copy of the grid
+    unsigned int *hyp = (unsigned int *)malloc(sizeof(unsigned int) * n);
+    unsigned int *hyp_mask = (unsigned int *)malloc(sizeof(unsigned int) * n);
+    for (int i = 0; i < n; i++)
+    {
+        hyp[i] = sol[i];
+    }
+    for (int i = 0; i < n; i++)
+    {
+        hyp_mask[i] = mask[i];
+    }
+    modifyValue(hyp, index, true);
+    modifyValue(hyp_mask, index, true);
+    while (checkValid(hyp, hyp_mask, n))
+    {
+        INDEX *id = Obtainable2D(hyp, hyp_mask, n, false);
+        if (id == NULL)
+        {
+            // we can't solve the grid with the current hypothesis
+            index.x++;
+            if (index.x == n)
+            {
+                index.x = 0;
+                index.y++;
+                if (index.y == n)
+                {
+                    return NULL;
+                }
+            }
+            return Hypothesis(sol, mask, n, index, debug);
+        }
+        // unlock the mask
+        modifyValue(hyp_mask, *id, true);
+        // set the value to the hypothesis
+        modifyValue(hyp, *id, true);
+        if (!checkValid(hyp, hyp_mask, n))
+        {
+            modifyValue(hyp, *id, false);
+        }
+        if (sum(hyp_mask, n) == (int)((pow(2, n) - 1) * n))
+        {
+            break;
+        }
+    }
+    INDEX *res = (INDEX *)malloc(sizeof(INDEX));
+    res->x = index.x;
+    res->y = index.y;
+    if (debug)
+        printf("By putting an Hypothesis at %d,%d we can lock the value.\n", index.x, index.y);
+    return res;
+}
+
+bool solvable(unsigned int *array, unsigned int *mask_og, int n)
+{
+    unsigned int *sol = (unsigned int *)malloc(sizeof(unsigned int) * n);
+    for (int i = 0; i < n; i++)
+    {
+        sol[i] = array[i];
+    }
+    unsigned int *mask = (unsigned int *)malloc(sizeof(unsigned int) * n);
+    for (int i = 0; i < n; i++)
+    {
+        mask[i] = mask_og[i];
+    }
+    INDEX *i;
+    while (sum(mask, n) != (int)((pow(2, n) - 1) * n))
+    {
+        i = Obtainable2D(sol, mask, n, false);
+        if (i != NULL)
+        {
+            modifyValue(mask, *i, true);
+            free(i);
+        }
+        else
+        {
+            INDEX temp;
+            temp.x = 0;
+            temp.y = 0;
+            i = Hypothesis(sol, mask, n, temp, false);
+            if (i != NULL)
+            {
+                modifyValue(mask, *i, true);
+                free(i);
+            }
+            else
+            {
+                bool res = false;
+                return res;
+            }
+        }
+    }
+    return true;
 }
