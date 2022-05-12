@@ -10,7 +10,7 @@
 
 int main()
 {
-    int n = 8;
+    int n = 4;
     clock_t t;
     t = clock();
     unsigned int *a = generate_grid(n);

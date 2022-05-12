@@ -6,6 +6,7 @@
 #include "cache.h"
 #include <stdbool.h>
 #include <math.h>
+#include <time.h>
 
 bool getDigit(unsigned int i, int digit)
 {
@@ -342,6 +343,7 @@ ListSizedList *listGridFromSet(SizedList *arr, int start, int end, ListSizedList
 unsigned int *generate_grid(unsigned int size)
 {
     SizedList *lines = list_lines(size);
+    srand(time(NULL));
 
     int k = size;
     int N = lines->size;

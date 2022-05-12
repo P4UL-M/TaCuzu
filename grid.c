@@ -248,10 +248,33 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                 }
             }
         }
+        if (countBits(sol[i] & mask[i]) == n / 2 && countBits(mask[i]) < n)
+        {
+            index->y = i;
+            index->x = 0;
+            while (getdigit(mask[i], index->x) == 1)
+            {
+                index->x++;
+            }
+            printf("There can only be %d 1 on line/columns %d\n", n / 2, index->y);
+            return index;
+        }
+        if (countBits(~sol[i] & mask[i]) == n / 2 && countBits(mask[i]) < n)
+        {
+            index->y = i;
+            index->x = 0;
+            while (getdigit(mask[i], index->x) == 1)
+            {
+                index->x++;
+            }
+            printf("There can only be %d 0 on line/columns %d\n", n / 2, index->y);
+            return index;
+        }
         if (countBits(mask[i]) == n - 1) // check number of values
         {
             printf("%d on line %d\n", countBits(mask[i]), i);
             index->y = i;
+            index->x = 0;
             while (getdigit(mask[i], index->x) == 1)
             {
                 index->x++;
@@ -278,6 +301,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n)
                     if (isdouble)
                     {
                         index->y = i;
+                        index->x = 0;
                         while (getdigit(mask[i], index->x) == 1)
                         {
                             index->x++;
