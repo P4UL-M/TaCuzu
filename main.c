@@ -10,7 +10,7 @@
 
 int main()
 {
-    int n = 4;
+    int n = 8;
     clock_t t;
     t = clock();
     unsigned int *a = generate_grid(n);
@@ -24,7 +24,7 @@ int main()
 
     displayUser(a, m, n);
     int cpt;
-    for (cpt = 0; cpt < 30; cpt++)
+    for (cpt = 0; cpt < 24; cpt++)
     {
         free(i);
         i = Obtainable(a, m, n);
@@ -55,7 +55,21 @@ int main()
             }
             else
             {
-                printf("No more possible after %d resolutions\n", cpt);
+                INDEX temp;
+                temp.x = 0;
+                temp.y = 0;
+                i = Hypothesis(a, m, n, temp);
+                if (i != NULL)
+                {
+                    printf("HYPOTHESISSSSS %d, %d\n", i->x, i->y);
+                    modifyValue(m, *i, true);
+                    displayUser(a, m, n);
+                }
+                else
+                {
+
+                    printf("No more possible after %d resolutions\n", cpt);
+                }
             }
         }
     }
