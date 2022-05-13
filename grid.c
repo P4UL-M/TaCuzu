@@ -55,8 +55,19 @@ void displayArray(unsigned int *a, int n)
 {
     INDEX i;
     int temp;
+    if (n == 4)
+    {
+        printf("  1 2 3 4\n");
+        printf("  _ _ _ _\n");
+    }
+    else
+    {
+        printf("  1 2 3 4 5 6 7 8\n");
+        printf("  _ _ _ _ _ _ _ _\n");
+    }
     for (i.y = 0; i.y < n; i.y++)
     {
+        printf("%c|", 'A' + i.y);
         for (i.x = 0; i.x < n; i.x++)
         {
             temp = getValue(a, i);
@@ -68,7 +79,7 @@ void displayArray(unsigned int *a, int n)
             {
                 printf(ANSI_COLOR_BLUE);
             }
-            printf("%d", getValue(a, i)); // print the value of the cell
+            printf("%d ", getValue(a, i)); // print the value of the cell
         }
         printf(ANSI_COLOR_RESET); // reset the color
         printf("\n");
@@ -79,8 +90,19 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
 {
     INDEX i;
     int temp;
+    if (n == 4)
+    {
+        printf("  1 2 3 4\n");
+        printf("  _ _ _ _\n");
+    }
+    else
+    {
+        printf("  1 2 3 4 5 6 7 8\n");
+        printf("  _ _ _ _ _ _ _ _\n");
+    }
     for (i.y = 0; i.y < n; i.y++)
     {
+        printf("%c|", 'A' + i.y);
         for (i.x = 0; i.x < n; i.x++)
         {
             if (getValue(mask, i))
@@ -94,11 +116,11 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
                 {
                     printf(ANSI_COLOR_BLUE);
                 }
-                printf("%d", getValue(sol, i));
+                printf("%d ", getValue(sol, i));
             }
             else
             {
-                printf(" ");
+                printf("  ");
             }
         }
         printf(ANSI_COLOR_RESET);

@@ -65,7 +65,6 @@ int main()
         }
     }
     printf("%d\n", cpt);*/
-    test();
-
+    user_main();
     return 0;
 }
