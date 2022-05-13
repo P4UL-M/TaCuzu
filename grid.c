@@ -230,7 +230,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
                     if (isdouble)
                     {
                         if (debug)
-                            printf("you can't put more than half of same value on one line.\n");
+                            printf("You cant be put this value since line/column %d would be a double of actual line/column\n", lines);
                         return false;
                     }
                 }
@@ -285,7 +285,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
                     if (isdouble)
                     {
                         if (debug)
-                            printf("you can't put more than half of same value on one line.\n");
+                            printf("You cant be put this value since line/column %d would be a double of actual line/column\n", lines);
                         return false;
                     }
                 }
