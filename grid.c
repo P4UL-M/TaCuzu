@@ -318,7 +318,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
     return true;
 }
 
-INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
+INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool debug)
 {
     INDEX *index = (INDEX *)malloc(sizeof(INDEX));
     for (int i = 0; i < n; i++)
@@ -333,7 +333,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
                     index->x = digit + 1;
                     if (debug)
                         printf("After two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
-                    return index; // Because grid inverted
+                    return index; //↑ Because grid inverted
                 }
             }
             if (getdigit(sol[i], digit - 1) == getdigit(sol[i], digit + 1) && 1 == getdigit(mask[i], digit - 1) && getdigit(mask[i], digit + 1) == 1)
@@ -368,7 +368,12 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
                 index->x++;
             }
             if (debug)
-                printf("There can only be %d 1 on line/columns %d\n", n / 2, index->y);
+            {
+                if (tr)
+                    printf("There can only be %d 1s on column %d\n", n / 2, index->y + 1);
+                else
+                    printf("There can only be %d 1s on line %c\n", n / 2, index->y + 'A');
+            }
             return index;
         }
         if (countBits(~sol[i] & mask[i]) == n / 2 && countBits(mask[i]) < n)
@@ -380,7 +385,10 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
                 index->x++;
             }
             if (debug)
-                printf("There can only be %d 0 on line/columns %d\n", n / 2, index->y);
+                if (tr)
+                    printf("There can only be %d 0s on column %d\n", n / 2, index->y + 1);
+                else
+                    printf("There can only be %d 0s on line %c\n", n / 2, index->y + 'A');
             return index;
         }
         if (countBits(mask[i]) == n - 1) // check number of values
@@ -392,7 +400,10 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
                 index->x++;
             }
             if (debug)
-                printf("There can only be one value for %d,%d since line is missing only 1 value\n", index->x, index->y);
+                if (tr)
+                    printf("There can only be one value for %d,%d since column is missing only 1 value\n", index->x + 1, index->y + 1);
+                else
+                    printf("There can only be one value for %d,%d since line is missing only 1 value\n", index->x + 1, index->y + 1);
             return index;
         }
         if (countBits(mask[i]) == n - 2) // check doublons
@@ -420,7 +431,10 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
                             index->x++;
                         }
                         if (debug)
-                            printf("There can only be one value for %d,%d since line/column %d would be a double of actual line/column\n", index->x, index->y, lines);
+                        if (tr)
+                            printf("There can only be one value for %d,%d since column %d would be a double of actual column\n", index->x + 1, index->y + 1, lines + 1);
+                        else
+                            printf("There can only be one value for %d,%d since line %d would be a double of actual line\n", index->x + 1, index->y + 1, lines + 'A');
                         return index;
                     }
                 }
@@ -432,7 +446,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
 
 INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n, bool debug)
 {
-    INDEX *index = Obtainable(sol, mask, n, debug);
+    INDEX *index = Obtainable(sol, mask, n, false, debug);
     if (index != NULL)
     {
         return index;
@@ -441,7 +455,7 @@ INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n, bool debug)
     {
         unsigned int *t = transpose(sol, n);
         unsigned int *t_mask = transpose(mask, n);
-        index = Obtainable(t, t_mask, n, debug);
+        index = Obtainable(t, t_mask, n, true, debug);
         free(t);
         free(t_mask);
         if (index != NULL)
