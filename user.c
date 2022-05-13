@@ -158,6 +158,14 @@ void play(unsigned int *sol, unsigned int *mask, int size)
             }
             printf("You lose 1 life, %d left\n", lives);
             modifyValue(mask, i, 0);
+            printf("Here is a clue :\n");
+            INDEX *temp_i = Obtainable2D(sol,mask,size,true);
+            if (temp_i != NULL) {
+                printf("Look at index : %c%d\n", 'A' + temp_i->y, temp_i->x+1); 
+                free(temp_i);
+            }
+            else
+                printf("No clue possible...\n");
         }
         displayUser(sol, mask, size);
     }
