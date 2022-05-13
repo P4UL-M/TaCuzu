@@ -218,7 +218,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
                 if (countBits(mask[lines]) == n && i != lines)
                 {
                     bool isdouble = true;
-                    for (int digit = 1; digit < n; digit++)
+                    for (int digit = 1; digit < n + 1; digit++)
                     {
                         if (getdigit(a[i], digit) != getdigit(a[lines], digit) && 1 == getdigit(mask[i], digit) && 1 == getdigit(mask[lines], digit))
                         {
@@ -273,9 +273,9 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
                 if (countBits(tm[lines]) == n && i != lines)
                 {
                     bool isdouble = true;
-                    for (int digit = 1; digit < n; digit++)
+                    for (int digit = 1; digit < n + 1; digit++)
                     {
-                        if (getdigit(t[i], digit) != getdigit(t[lines], digit) && 1 == getdigit(tm[i], digit) && 1 == getdigit(tm[lines], digit))
+                        if (getdigit(t[i], digit) != getdigit(t[lines], digit) && getdigit(tm[i], digit) && getdigit(tm[lines], digit))
                         {
                             isdouble = false;
                             break;
@@ -380,7 +380,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool debug)
                 if (countBits(mask[lines]) == n && i != lines)
                 {
                     bool isdouble = true;
-                    for (int digit = 1; digit < n; digit++)
+                    for (int digit = 1; digit < n + 1; digit++)
                     {
                         if (getdigit(sol[i], digit) != getdigit(sol[lines], digit) && 1 == getdigit(mask[i], digit) && 1 == getdigit(mask[lines], digit))
                         {
