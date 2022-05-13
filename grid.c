@@ -216,7 +216,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
                 if (getdigit(a[i], digit) == getdigit(a[i], digit + 1) && getdigit(a[i], digit) == getdigit(a[i], digit + 2))
                 {
                     if (debug)
-                        printf("you can't put 3 %d in serie.\n", getdigit(a[i], digit));
+                        printf("You can't put 3 %d in series.\n", getdigit(a[i], digit));
                     return false;
                 }
             }
@@ -224,13 +224,13 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
         if (countBits(a[i] & mask[i]) > (n / 2)) // check if more than half of the cells wich are 1 and visible
         {
             if (debug)
-                printf("you can't put more than half of the cells of 1.\n");
+                printf("You can't put more than %d ones.\n", n/2);
             return false;
         }
         if (countBits(~a[i] & mask[i]) > (n / 2)) // check if more than half of the cells wich are 0 and visible
         {
             if (debug)
-                printf("you can't put more than half of the cells of 0.\n");
+                printf("You can't put more than %d zeros.\n", n/2);
             return false;
         }
         if (countBits(mask[i]) == n - 1) // check number of values
@@ -252,7 +252,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
                     if (isdouble)
                     {
                         if (debug)
-                            printf("You cant be put this value since line/column %d would be a double of actual line/column\n", lines);
+                            printf("You can't put this value since line %c would be a double of actual line\n", lines + 'A');
                         return false;
                     }
                 }
@@ -271,7 +271,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
                 if (getdigit(t[i], digit) == getdigit(t[i], digit + 1) && getdigit(t[i], digit) == getdigit(t[i], digit + 2))
                 {
                     if (debug)
-                        printf("you can't put 3 %d in serie.\n", getdigit(a[i], digit));
+                        printf("You can't put 3 %d in serie.\n", getdigit(a[i], digit));
                     return false;
                 }
             }
@@ -279,13 +279,13 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
         if (countBits(t[i] & tm[i]) > (n / 2)) // check if more than half of the cells wich are 1 and visible
         {
             if (debug)
-                printf("you can't put more than half of the cells of 1.\n");
+                printf("You can't put more than %d ones.\n", n/2);
             return false;
         }
         if (countBits(~t[i] & tm[i]) > (n / 2)) // check if more than half of the cells wich are 0 and visible
         {
             if (debug)
-                printf("you can't put more than half of the cells of 0.\n");
+                printf("You can't put more than %d zeros.\n", n/2);
             return false;
         }
         if (countBits(tm[i]) == n - 1) // check number of values
@@ -307,7 +307,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
                     if (isdouble)
                     {
                         if (debug)
-                            printf("You cant be put this value since line/column %d would be a double of actual line/column\n", lines);
+                            printf("You can't put this value since column %d would be a double of actual column\n", 1 + lines);
                         return false;
                     }
                 }

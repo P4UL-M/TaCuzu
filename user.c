@@ -4,6 +4,11 @@
 #include "data.h"
 #include "grid.h"
 #include <ctype.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 void play(unsigned int *sol, unsigned int *mask, int size);
 void solve(unsigned int *sol, unsigned int *mask, int size);
@@ -29,14 +34,16 @@ void user_main()
         unsigned int *sol;
         if (action != 1)
         {
-            printf("\nWhat is the size of the grid you want? (4 or 8)\n>");
+            printf("\nWhat is the size of the grid you want? (4 or 8)\n");
             do
             {
+                printf(">");
                 scanf("%d", &size);
             } while (size != 4 && size != 8);
-            printf("\nWhat is the level of difficulty you want? (1 to 3)\n>");
+            printf("\nWhat is the level of difficulty you want? (1 to 3)\n");
             do
             {
+                printf(">");
                 scanf("%d", &difficulty);
             } while (difficulty < 1 || difficulty > 3);
             mask = createMask(size, difficulty);
@@ -49,13 +56,15 @@ void user_main()
                 printf("\nYou can change the default grids in the constant.h file, and then play!\nDo you want to use default grids? (Enter 0 for no, 1 for yes)\n>");
                 do
                 {
+                    printf(">");
                     scanf("%d", &action);
                 } while (action != 0 && action != 1);
                 if (action)
                 {
-                printf("\nWhat is the size of the grid you want? (4 or 8)\n>");
+                printf("\nWhat is the size of the grid you want? (4 or 8)\n");
                 do
                 {
+                    printf(">");
                     scanf("%d", &size);
                 } while (size != 4 && size != 8);
                     mask = getDefaultMask(size);
@@ -85,17 +94,41 @@ void user_main()
     }
     case 2:
     {
-        //fonction solve grid with Obtainable()
+        do
+        {
+            printf("\n1.Enter a mask manually\n2.Let the mask be automatically generated\n3.Play directly\n>");
+            scanf("%d", &action);
+        } while (action < 1 || 3 < action);
+        unsigned int *mask;
+        unsigned int *sol;
+        printf("\nWhat is the size of the grid you want? (4 or 8)\n");
+        do
+        {
+            printf(">");
+            scanf("%d", &size);
+        } while (size != 4 && size != 8);
+        printf("\nWhat is the level of difficulty you want? (1 to 3)\n");
+        do
+        {
+            printf(">");
+            scanf("%d", &difficulty);
+        } while (difficulty < 1 || difficulty > 3);
+        mask = createMask(size, difficulty);
+        sol = generate_grid(size);
+        solve(sol, mask, size);
         break;
     }
     case 3:
     {
-        printf("What is the size of the grid you want? (4 or 8)\n>");
+        printf("What is the size of the grid you want? (4 or 8)\n");
         do
         {
-            scanf("%d", &size);
-        } while (size != 4 || size != 8);
-        //fonction to create grid and show it
+            printf(">");
+            scanf(" %d", &size);
+        } while (size != 4 && size != 8);
+        unsigned int *ar = generate_grid(size);
+        displayArray(ar, size);
+        free(ar);
         break;
     }
     default:
@@ -131,7 +164,7 @@ void play(unsigned int *sol, unsigned int *mask, int size)
             i.x -= 1;
             if (getValue(mask, i))
                 printf("Value already seen!\n");
-        } while (((i.x < 0 || i.y >= size) && (i.y < 0 || i.y >= size)) || getValue(mask,i));
+        } while (i.x < 0 || i.x >= size || i.y < 0 || i.y >= size || getValue(mask,i));
         do {
             printf("What is the value at that position?\n>");
             scanf(" %d", &value);
@@ -174,5 +207,41 @@ void play(unsigned int *sol, unsigned int *mask, int size)
 
 void solve(unsigned int *sol, unsigned int *mask, int size)
 {
-    
+    INDEX *i;
+
+    displayUser(sol, mask, size);
+    while (sum(mask, size) != (int)((pow(2, size) - 1) * size))
+    {
+        i = Obtainable2D(sol, mask, size, true);
+        if (i != NULL)
+        {
+            printf("%d, %d\n", i->x, i->y);
+            modifyValue(mask, *i, true);
+            displayUser(sol, mask, size);
+        }
+        else
+        {
+            INDEX temp;
+            temp.x = 0;
+            temp.y = 0;
+            i = Hypothesis(sol, mask, size, temp, true);
+            if (i != NULL)
+            {
+                modifyValue(mask, *i, true);
+                displayUser(sol, mask, size);
+            }
+            else
+            {
+
+                printf("No more possible resolutions\n");
+            }
+        }
+        free(i);
+        printf("Press a key to continue...\n");
+        while(1){
+            if (getchar()) {
+                break;
+            }
+        }
+    }
 }
