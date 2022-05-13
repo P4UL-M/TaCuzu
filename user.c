@@ -240,6 +240,7 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
         printf("Press a key to continue...\n");
         while(1){
             if (getchar()) {
+                Sleep(100);
                 break;
             }
         }
