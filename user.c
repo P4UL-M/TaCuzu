@@ -12,6 +12,7 @@
 
 void play(unsigned int *sol, unsigned int *mask, int size);
 void solve(unsigned int *sol, unsigned int *mask, int size);
+void waitKey();
 
 void user_main()
 {
@@ -100,7 +101,7 @@ void user_main()
         }
         free(mask);
         free(sol);
-        // TODO temporisation
+        waitKey();
         system("clear");
         user_main();
         return;
@@ -179,7 +180,6 @@ void user_main()
         solve(sol, mask, size);
         free(mask);
         free(sol);
-        // TODO temporisation
         system("clear");
         user_main();
         return;
@@ -213,7 +213,7 @@ void user_main()
         unsigned int *ar = generate_grid(size);
         displayArray(ar, size);
         free(ar);
-        // TODO temporisation
+        waitKey();
         system("clear");
         user_main();
         return;
@@ -329,14 +329,21 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
             }
         }
         free(i);
-        printf("Press a key to continue...\n");
-        while (1)
+        waitKey();
+    }
+}
+
+void waitKey()
+{
+    fflush(stdin);
+    printf("Press a key to continue...\n");
+    sleep(0.5f);
+    while (1)
+    {
+        if (getchar())
         {
-            sleep(0.5f);
-            if (getchar())
-            {
-                break;
-            }
+            fflush(stdin);
+            break;
         }
     }
 }

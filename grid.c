@@ -224,13 +224,13 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
         if (countBits(a[i] & mask[i]) > (n / 2)) // check if more than half of the cells wich are 1 and visible
         {
             if (debug)
-                printf("You can't put more than %d ones.\n", n/2);
+                printf("You can't put more than %d ones.\n", n / 2);
             return false;
         }
         if (countBits(~a[i] & mask[i]) > (n / 2)) // check if more than half of the cells wich are 0 and visible
         {
             if (debug)
-                printf("You can't put more than %d zeros.\n", n/2);
+                printf("You can't put more than %d zeros.\n", n / 2);
             return false;
         }
         if (countBits(mask[i]) == n - 1) // check number of values
@@ -279,13 +279,13 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
         if (countBits(t[i] & tm[i]) > (n / 2)) // check if more than half of the cells wich are 1 and visible
         {
             if (debug)
-                printf("You can't put more than %d ones.\n", n/2);
+                printf("You can't put more than %d ones.\n", n / 2);
             return false;
         }
         if (countBits(~t[i] & tm[i]) > (n / 2)) // check if more than half of the cells wich are 0 and visible
         {
             if (debug)
-                printf("You can't put more than %d zeros.\n", n/2);
+                printf("You can't put more than %d zeros.\n", n / 2);
             return false;
         }
         if (countBits(tm[i]) == n - 1) // check number of values
@@ -385,10 +385,12 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
                 index->x++;
             }
             if (debug)
+            {
                 if (tr)
                     printf("There can only be %d 0s on column %d\n", n / 2, index->y + 1);
                 else
                     printf("There can only be %d 0s on line %c\n", n / 2, index->y + 'A');
+            }
             return index;
         }
         if (countBits(mask[i]) == n - 1) // check number of values
@@ -400,10 +402,12 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
                 index->x++;
             }
             if (debug)
+            {
                 if (tr)
                     printf("There can only be one value for %d,%d since column is missing only 1 value\n", index->x + 1, index->y + 1);
                 else
                     printf("There can only be one value for %d,%d since line is missing only 1 value\n", index->x + 1, index->y + 1);
+            }
             return index;
         }
         if (countBits(mask[i]) == n - 2) // check doublons
@@ -431,10 +435,12 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
                             index->x++;
                         }
                         if (debug)
-                        if (tr)
-                            printf("There can only be one value for %d,%d since column %d would be a double of actual column\n", index->x + 1, index->y + 1, lines + 1);
-                        else
-                            printf("There can only be one value for %d,%d since line %d would be a double of actual line\n", index->x + 1, index->y + 1, lines + 'A');
+                        {
+                            if (tr)
+                                printf("There can only be one value for %d,%d since column %d would be a double of actual column\n", index->x + 1, index->y + 1, lines + 1);
+                            else
+                                printf("There can only be one value for %d,%d since line %d would be a double of actual line\n", index->x + 1, index->y + 1, lines + 'A');
+                        }
                         return index;
                     }
                 }
@@ -575,5 +581,7 @@ bool solvable(unsigned int *array, unsigned int *mask_og, int n)
             }
         }
     }
+    free(sol);
+    free(mask);
     return true;
 }
