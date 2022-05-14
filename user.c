@@ -18,21 +18,23 @@ void user_main()
     int menu, action, size, difficulty;
     do
     {
+        system("clear");
         printf("Do you want to:\n1.Solve a grid\n2.See a grid being solved\n3.Create a grid\n4.Quit\n>");
         scanf("%d", &menu);
-    } while (menu < 0 || 5 < menu);
+    } while (menu < 1 || 4 < menu);
     switch (menu)
     {
     case 1:
     {
         do
         {
-            printf("\n1.Enter a mask manually\n2.Let the mask be automatically generated\n3.Play directly\n>");
+            system("clear");
+            printf("Do you want to:\n1.Enter a mask manually\n2.Let the mask be automatically generated\n3.Play directly\n4.Go back\n>");
             scanf("%d", &action);
-        } while (action < 1 || 3 < action);
+        } while (action < 1 || 4 < action);
         unsigned int *mask;
         unsigned int *sol;
-        if (action != 1)
+        if (action == 2 || action == 3)
         {
             printf("\nWhat is the size of the grid you want? (4 or 8)\n");
             do
@@ -51,85 +53,170 @@ void user_main()
         }
         switch (action)
         {
-            case 1:
+        case 1:
+        {
+            printf("\nYou can change the default grids in the constant.h file, and then play!\nDo you want to use default grids? (Enter 0 for no, 1 for yes)\n>");
+            do
             {
-                printf("\nYou can change the default grids in the constant.h file, and then play!\nDo you want to use default grids? (Enter 0 for no, 1 for yes)\n>");
-                do
-                {
-                    printf(">");
-                    scanf("%d", &action);
-                } while (action != 0 && action != 1);
-                if (action)
-                {
+                printf(">");
+                scanf("%d", &action);
+            } while (action != 0 && action != 1);
+            if (action)
+            {
                 printf("\nWhat is the size of the grid you want? (4 or 8)\n");
                 do
                 {
                     printf(">");
                     scanf("%d", &size);
                 } while (size != 4 && size != 8);
-                    mask = getDefaultMask(size);
-                    sol = getDefaultGrid(size);
-                    play(sol, mask, size);
-                }
-                else
-                {
-                    user_main();
-                }
-                break;
-            }
-            case 2:
-            {
-                printf("The mask is:\n\n");
-                displayArray(mask, size);
+                mask = getDefaultMask(size);
+                sol = getDefaultGrid(size);
                 play(sol, mask, size);
-                break;
             }
-            case 3:
+            else
             {
-                play(sol, mask, size);
-                break;
+                user_main();
+                return;
             }
+            break;
         }
-        break;
+        case 2:
+        {
+            printf("The mask is:\n\n");
+            displayArray(mask, size);
+            play(sol, mask, size);
+            break;
+        }
+        case 3:
+        {
+            play(sol, mask, size);
+            break;
+        }
+        default:
+        {
+            user_main();
+            return;
+        }
+        }
+        free(mask);
+        free(sol);
+        // TODO temporisation
+        system("clear");
+        user_main();
+        return;
     }
     case 2:
     {
         do
         {
-            printf("\n1.Enter a mask manually\n2.Let the mask be automatically generated\n3.Play directly\n>");
+            system("clear");
+            printf("Do you want to:\n1.Enter a mask manually\n2.Let the mask be automatically generated\n3.Go back\n>");
             scanf("%d", &action);
         } while (action < 1 || 3 < action);
         unsigned int *mask;
         unsigned int *sol;
-        printf("\nWhat is the size of the grid you want? (4 or 8)\n");
-        do
+        switch (action)
         {
-            printf(">");
-            scanf("%d", &size);
-        } while (size != 4 && size != 8);
-        printf("\nWhat is the level of difficulty you want? (1 to 3)\n");
-        do
+        case 1:
         {
-            printf(">");
-            scanf("%d", &difficulty);
-        } while (difficulty < 1 || difficulty > 3);
-        mask = createMask(size, difficulty);
-        sol = generate_grid(size);
+            printf("\nYou can change the default grids in the constant.h file, and then play!\nDo you want to use default grids? (Enter 0 for no, 1 for yes)\n>");
+            do
+            {
+                printf(">");
+                scanf("%d", &action);
+            } while (action != 0 && action != 1);
+            if (action)
+            {
+                printf("\nWhat is the size of the grid you want? (4 or 8)\n");
+                do
+                {
+                    printf(">");
+                    scanf("%d", &size);
+                } while (size != 4 && size != 8);
+                mask = getDefaultMask(size);
+                sol = getDefaultGrid(size);
+            }
+            else
+            {
+                user_main();
+                return;
+            }
+            break;
+        }
+        case 2:
+        {
+            printf("\nWhat is the size of the grid you want? (4 or 8)\n");
+            do
+            {
+                printf(">");
+                scanf("%d", &size);
+            } while (size != 4 && size != 8);
+            difficulty = size == 4 ? 2 : 1;
+            mask = createMask(size, difficulty);
+            sol = generate_grid(size);
+            int i = 0;
+            while (!solvable(sol, mask, size))
+            {
+                free(mask);
+                mask = createMask(size, difficulty);
+                i++;
+                if (i % 50 == 0)
+                {
+                    free(sol);
+                    sol = generate_grid(size);
+                }
+            }
+            printf("\nThe mask is:\n\n");
+            displayArray(mask, size);
+            break;
+        }
+        case 3:
+        {
+            user_main();
+            return;
+        }
+        }
         solve(sol, mask, size);
-        break;
+        free(mask);
+        free(sol);
+        // TODO temporisation
+        system("clear");
+        user_main();
+        return;
     }
     case 3:
     {
-        printf("What is the size of the grid you want? (4 or 8)\n");
         do
         {
-            printf(">");
-            scanf(" %d", &size);
-        } while (size != 4 && size != 8);
+            system("clear");
+            printf("Do you want to:\n1.Generate 4x4 grid\n2.Generate 8x8 grid\n3.Go back\n>");
+            scanf("%d", &action);
+        } while (action < 1 || 3 < action);
+        switch (action)
+        {
+        case 1:
+        {
+            size = 4;
+            break;
+        }
+        case 2:
+        {
+            size = 8;
+            break;
+        }
+        case 3:
+        {
+            user_main();
+            return;
+        }
+        }
         unsigned int *ar = generate_grid(size);
         displayArray(ar, size);
         free(ar);
-        break;
+        // TODO temporisation
+        system("clear");
+        user_main();
+        return;
     }
     default:
         break;
@@ -141,7 +228,8 @@ void play(unsigned int *sol, unsigned int *mask, int size)
     char column;
     int lives = 3, value;
     unsigned int *temp_sol = (unsigned int *)malloc(sizeof(unsigned int) * size);
-    for (int i = 0; i<size;i++){
+    for (int i = 0; i < size; i++)
+    {
         temp_sol[i] = sol[i];
     }
     INDEX i;
@@ -164,19 +252,22 @@ void play(unsigned int *sol, unsigned int *mask, int size)
             i.x -= 1;
             if (getValue(mask, i))
                 printf("Value already seen!\n");
-        } while (i.x < 0 || i.x >= size || i.y < 0 || i.y >= size || getValue(mask,i));
-        do {
+        } while (i.x < 0 || i.x >= size || i.y < 0 || i.y >= size || getValue(mask, i));
+        do
+        {
             printf("What is the value at that position?\n>");
             scanf(" %d", &value);
         } while (value != 0 && value != 1);
         modifyValue(temp_sol, i, value);
         modifyValue(mask, i, 1);
-        if(checkValid(temp_sol, mask, size, true))
+        if (checkValid(temp_sol, mask, size, true))
         {
-            if (getValue(sol,i) == getValue(temp_sol,i)){
+            if (getValue(sol, i) == getValue(temp_sol, i))
+            {
                 printf("Your value is correct!\n");
             }
-            else{
+            else
+            {
                 printf("Your value is valid but incorrect.\n");
                 modifyValue(mask, i, 0);
             }
@@ -192,9 +283,10 @@ void play(unsigned int *sol, unsigned int *mask, int size)
             printf("You lose 1 life, %d left\n", lives);
             modifyValue(mask, i, 0);
             printf("Here is a clue :\n");
-            INDEX *temp_i = Obtainable2D(sol,mask,size,true);
-            if (temp_i != NULL) {
-                printf("Look at index : %c%d\n", 'A' + temp_i->y, temp_i->x+1); 
+            INDEX *temp_i = Obtainable2D(sol, mask, size, true);
+            if (temp_i != NULL)
+            {
+                printf("Look at index : %c%d\n", 'A' + temp_i->y, temp_i->x + 1);
                 free(temp_i);
             }
             else
@@ -232,14 +324,17 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
             }
             else
             {
-
                 printf("No more possible resolutions\n");
+                break;
             }
         }
         free(i);
         printf("Press a key to continue...\n");
-        while(1){
-            if (getchar()) {
+        while (1)
+        {
+            sleep(0.5f);
+            if (getchar())
+            {
                 break;
             }
         }

@@ -71,18 +71,17 @@ print(lines, len(lines))
 #     print(solution)
 
 
-target = 2**(K + 1) - 2
+target = (2**(K) - 1)*K//2
 nums = lines
 
 has_solution = subsetsum.has_solution(nums, target)
 print(f"Can {nums} sum to {target}? {has_solution}")
+solutions = []
 
 for solution in subsetsum.solutions(nums, target):
     # `solution` contains indices of elements in `nums`
-    subset = [nums[i] for i in solution]
+    subset = set(nums[i] for i in solution)
     if len(subset) == K:
-        sum_value = sum(subset)
-        print("subset1", subset)
-        for b in subset:
-            print("".join([str(0)
-                  for i in range(K - len(bin(b)) + 2)]), bin(b)[2:], sep="")
+        solutions.append(subset)
+
+print(len(solutions))

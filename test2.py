@@ -28,13 +28,13 @@ def getbit(nb, n):
     return nb >> n & 1
 
 
-K = 16
+K = 8
 A = [i for i in list_lines(K)]
 N = len(A)
 print(A)
 A.sort()
 M = (1 << N) - 1
-P = 2**(K+1) - 2
+P = (2**(K) - 1)*K//2
 
 print(P)
 
