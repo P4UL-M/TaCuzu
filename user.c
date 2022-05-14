@@ -330,17 +330,11 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
         }
         free(i);
         printf("Press a key to continue...\n");
-<<<<<<< HEAD
         while (1)
         {
             sleep(0.5f);
             if (getchar())
             {
-=======
-        while(1){
-            if (getchar()) {
-                Sleep(100);
->>>>>>> 19e2a50cf3b6894c3ecf0d7ad47795af362465c5
                 break;
             }
         }
