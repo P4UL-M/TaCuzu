@@ -539,6 +539,8 @@ INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index, boo
     res->y = index.y;
     if (debug)
         printf("By putting an Hypothesis at %d,%d we can lock the value.\n", index.x, index.y);
+    free(hyp);
+    free(hyp_mask);
     return res;
 }
 
@@ -576,8 +578,7 @@ bool solvable(unsigned int *array, unsigned int *mask_og, int n)
             }
             else
             {
-                bool res = false;
-                return res;
+                return false;
             }
         }
     }
