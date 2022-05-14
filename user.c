@@ -51,6 +51,21 @@ void user_main()
             } while (difficulty < 1 || difficulty > 3);
             mask = createMask(size, difficulty);
             sol = generate_grid(size);
+            if (difficulty == 1)
+            {
+                int i = 0;
+                while (!solvable(sol, mask, size))
+                {
+                    free(mask);
+                    mask = createMask(size, difficulty);
+                    i++;
+                    if (i % 50 == 0)
+                    {
+                        free(sol);
+                        sol = generate_grid(size);
+                    }
+                }
+            }
         }
         switch (action)
         {
@@ -307,9 +322,7 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
         i = Obtainable2D(sol, mask, size, true);
         if (i != NULL)
         {
-            printf("%d, %d\n", i->x, i->y);
             modifyValue(mask, *i, true);
-            displayUser(sol, mask, size);
         }
         else
         {
@@ -320,7 +333,6 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
             if (i != NULL)
             {
                 modifyValue(mask, *i, true);
-                displayUser(sol, mask, size);
             }
             else
             {
@@ -328,8 +340,11 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
                 break;
             }
         }
+        printf("%c, %d\n", 'A' + i->y, i->x + 1);
+        displayUser(sol, mask, size);
         free(i);
         waitKey();
+        system("clear");
     }
 }
 
