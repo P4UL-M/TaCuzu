@@ -24,7 +24,7 @@ bool getdigit(unsigned int i, int digit)
 }
 
 int countBits(unsigned int i)
-//To count the bits on a line
+// To count the bits on a line
 {
     int count = 0;
     while (i != 0)
@@ -62,7 +62,7 @@ void displayArray(unsigned int *a, int n)
 {
     INDEX i;
     int temp;
-    if (n == 4)                     // For the grid to be easily readable
+    if (n == 4) // For the grid to be easily readable
     {
         printf("  1 2 3 4\n");
         printf("  _ _ _ _\n");
@@ -89,7 +89,6 @@ void displayArray(unsigned int *a, int n)
             printf("%d ", getValue(a, i)); // print the value of the cell
         }
         printf(ANSI_COLOR_RESET); // reset the color
-        printf(" %d", a[i.y]);
         printf("\n");
     }
 }
@@ -99,7 +98,7 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
 {
     INDEX i;
     int temp;
-    if (n == 4)                     // For the grid to be easily readable
+    if (n == 4) // For the grid to be easily readable
     {
         printf("  1 2 3 4\n");
         printf("  _ _ _ _\n");
@@ -134,7 +133,6 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
             }
         }
         printf(ANSI_COLOR_RESET);
-        printf(" %d", sol[i.y]);
         printf("\n");
     }
 }
@@ -218,7 +216,7 @@ bool checkArray(unsigned int *a, int n)
 }
 
 bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
-//Check the array considering the mask
+// Check the array considering the mask
 {
     // check for lines
     for (int i = 0; i < n; i++)
@@ -591,7 +589,7 @@ bool solvable(unsigned int *array, unsigned int *mask_og, int n)
             INDEX temp;
             temp.x = 0;
             temp.y = 0;
-            i = Hypothesis(sol, mask, n, temp, false);      // Try an hypothesis to improve research of the solving
+            i = Hypothesis(sol, mask, n, temp, false); // Try an hypothesis to improve research of the solving
             if (i != NULL)
             {
                 modifyValue(mask, *i, true);

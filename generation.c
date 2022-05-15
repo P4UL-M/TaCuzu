@@ -1,3 +1,6 @@
+/*TaCuzu
+Paul Mairesse and Axel Loones
+This file contains all operation for the generation*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "data.h"
@@ -10,11 +13,13 @@
 
 bool getDigit(unsigned int i, int digit)
 {
+    // get the digit of i at the digit position
     return i >> digit & 1;
 }
 
 int countSetBits(unsigned int i)
 {
+    // count the number of bits in i
     int count = 0;
     while (i != 0)
     {
@@ -26,6 +31,7 @@ int countSetBits(unsigned int i)
 
 void freeSizedList(SizedList *l)
 {
+    // free a matrix
     if (l == NULL)
     {
         return;
@@ -39,6 +45,7 @@ void freeSizedList(SizedList *l)
 
 void freeList(ListSizedList *l)
 {
+    // free a list of matrix
     if (l == NULL)
     {
         return;
@@ -52,10 +59,11 @@ void freeList(ListSizedList *l)
 
 SizedList *list_lines(unsigned int size)
 {
+    // generate a list of lines with the size given
     int res[(int)pow(2, size)];
     int cpt = 0;
 
-    for (int i = 0; i < pow(2, size); i++) // get lines that work
+    for (int i = 0; i < pow(2, size); i++) // get all lines possible
     {
         int nb = size - 2;
         bool isValid = true;
@@ -88,6 +96,7 @@ SizedList *list_lines(unsigned int size)
 
 SizedList *extend(SizedList *l1, SizedList *l2)
 {
+    // extend a matrix of lines with another matrix given
     SizedList *res = (SizedList *)malloc(sizeof(SizedList));
     res->size = l1->size + l2->size;
     res->data = (unsigned int *)malloc(sizeof(unsigned int) * res->size);
@@ -104,6 +113,7 @@ SizedList *extend(SizedList *l1, SizedList *l2)
 
 SizedList *copy(SizedList *l)
 {
+    // copy a matrix
     SizedList *res = (SizedList *)malloc(sizeof(SizedList));
     res->size = l->size;
     res->data = (unsigned int *)malloc(sizeof(unsigned int) * res->size);
@@ -116,6 +126,7 @@ SizedList *copy(SizedList *l)
 
 SizedList *append(SizedList *l, unsigned int e)
 {
+    // append an element to a matrix
     SizedList *res = (SizedList *)malloc(sizeof(SizedList));
     res->size = l->size + 1;
     res->data = (unsigned int *)malloc(sizeof(unsigned int) * res->size);
@@ -130,6 +141,7 @@ SizedList *append(SizedList *l, unsigned int e)
 
 SizedList *removeFromIndex(SizedList *l, unsigned int index)
 {
+    // remove an element from a matrix
     SizedList *res = (SizedList *)malloc(sizeof(SizedList));
     res->size = l->size - 1;
     res->data = (unsigned int *)malloc(sizeof(unsigned int) * res->size);
@@ -147,6 +159,7 @@ SizedList *removeFromIndex(SizedList *l, unsigned int index)
 
 ListSizedList *appendList(ListSizedList *l, SizedList *e)
 {
+    // append a matrix to a list of matrix
     ListSizedList *res = (ListSizedList *)malloc(sizeof(ListSizedList));
     res->size = l->size + 1;
     res->data = (SizedList **)malloc(sizeof(SizedList *) * res->size);
@@ -161,6 +174,7 @@ ListSizedList *appendList(ListSizedList *l, SizedList *e)
 
 ListSizedList *extendList(ListSizedList *l1, ListSizedList *l2)
 {
+    // extend a list of matrix with another list of matrix given
     ListSizedList *res = (ListSizedList *)malloc(sizeof(ListSizedList));
     res->size = l1->size + l2->size;
     res->data = (SizedList **)malloc(sizeof(SizedList *) * res->size);
@@ -177,6 +191,7 @@ ListSizedList *extendList(ListSizedList *l1, ListSizedList *l2)
 
 ListSizedList *knapsack(int i, int target, int k, SizedList *A, int N)
 {
+    // recursive function to give the list of set with a sum of k
     if (i > N - k)
     {
         ListSizedList *res = (ListSizedList *)malloc(sizeof(ListSizedList));
@@ -210,7 +225,7 @@ ListSizedList *knapsack(int i, int target, int k, SizedList *A, int N)
         temp->data[i] = tmpdata[i];
     }
     ListSizedList *restemp = find_entry(hashCode(temp));
-    if (restemp != NULL)
+    if (restemp != NULL) // if the entry has already been computed and store into the hash table
     {
         return restemp;
     }
@@ -225,12 +240,13 @@ ListSizedList *knapsack(int i, int target, int k, SizedList *A, int N)
         ret = appendList(ret, new);
     }
     ret = extendList(ret, knapsack(i + 1, target, k, A, N));
-    add_entry(hashCode(temp), ret);
+    add_entry(hashCode(temp), ret); // add the entry to the hash table
     return ret;
 }
 
 ListSizedList *sortBadSet(ListSizedList *list)
 {
+    // remove every set from the list that cannot be grid
     ListSizedList *res = (ListSizedList *)malloc(sizeof(ListSizedList));
     res->size = 0;
     res->data = NULL;
@@ -247,7 +263,7 @@ ListSizedList *sortBadSet(ListSizedList *list)
                 break;
             }
         }
-        if (test && checkDouble(tr, l->size))
+        if (test)
         {
             res = appendList(res, l);
         }
@@ -255,63 +271,17 @@ ListSizedList *sortBadSet(ListSizedList *list)
     return res;
 }
 
-SizedList *sortGrid(SizedList *block, int index, SizedList *remain)
-{
-    if (block == NULL)
-    {
-        SizedList *res = (SizedList *)malloc(sizeof(SizedList));
-        res->size = 0;
-        res->data = NULL;
-        block = res;
-    }
-    if (block->size == 0 || block->size == 1)
-    {
-        block = append(block, remain->data[index]);
-        remain = removeFromIndex(remain, index);
-        return sortGrid(block, index, remain);
-    }
-    if (remain->size > 0)
-    {
-        int nb = remain->size + block->size - 2;
-        bool test = true;
-        for (int digit = 0; digit < nb; digit++)
-        {
-            if (getDigit(remain->data[index], digit) == getDigit(block->data[block->size - 1], digit) && getDigit(remain->data[index], digit) == getDigit(block->data[block->size - 2], digit))
-            {
-                test = false;
-                break;
-            }
-        }
-        if (test)
-        {
-            block = append(block, remain->data[index]);
-            remain = removeFromIndex(remain, index);
-            return sortGrid(block, 0, remain);
-        }
-        else
-        {
-            if (index == remain->size - 1)
-            {
-                remain = append(remain, block->data[block->size - 1]);
-                block = removeFromIndex(block, block->size - 1);
-                return sortGrid(block, 0, remain);
-            }
-            return sortGrid(block, index + 1, remain);
-        }
-    }
-    return block;
-}
-
 void swap(SizedList *l, int i, int j)
 {
+    // swap two elements of a list
     unsigned int tmp = l->data[i];
     l->data[i] = l->data[j];
     l->data[j] = tmp;
 }
 
-// permutation function
 ListSizedList *listGridFromSet(SizedList *arr, int start, int end, ListSizedList *l)
 {
+    // recursive function to give the list of grid from a set
     if (l == NULL)
     {
         l = (ListSizedList *)malloc(sizeof(ListSizedList));
@@ -342,29 +312,90 @@ ListSizedList *listGridFromSet(SizedList *arr, int start, int end, ListSizedList
 
 unsigned int *generate_grid(unsigned int size)
 {
+    // generate a grid of size size
+
+    // get the list of possible lines
     SizedList *lines = list_lines(size);
     srand(time(NULL));
 
     int k = size;
     int N = lines->size;
     int P = (pow(2, k) - 1) * k / 2;
+    // get the list of possible sets
     ListSizedList *knapRes = knapsack(0, P, k, lines, N);
     if (lines)
         freeSizedList(lines);
 
+    // remove every set that cannot be grid
     ListSizedList *sortedSets = sortBadSet(knapRes);
     int index = rand() % sortedSets->size;
     SizedList *res = sortedSets->data[index];
+    // get the list of possible grids of a set
     ListSizedList *grids = listGridFromSet(res, 0, res->size - 1, NULL);
-    while (grids->size == 0)
+    while (grids->size == 0) // secure that there is at least one grid
     {
         index = rand() % sortedSets->size;
         res = sortedSets->data[index];
         freeList(grids);
         grids = listGridFromSet(res, 0, res->size - 1, NULL);
     }
+    // get a random grid
     SizedList *grid = copy(grids->data[rand() % grids->size]);
     freeList(sortedSets);
     freeList(grids);
+    // return the grid
     return grid->data;
+}
+
+// WIP
+unsigned int *generate_grid_recc(SizedList *res, SizedList *lines, unsigned int size);
+unsigned int xnor(unsigned int a, unsigned int b, int size);
+unsigned int *generate_grid2(unsigned int size)
+{
+    // get all lines
+    SizedList *lines = list_lines(size);
+    SizedList *res = (SizedList *)malloc(sizeof(SizedList));
+
+    srand(time(NULL));
+    for (int i = 0; i < (int)(size / 2); i++)
+    {
+        int tmp = rand() % lines->size;
+        printf("adding : %d\n", lines->data[tmp]);
+        res = append(res, lines->data[tmp]);
+        lines = removeFromIndex(lines, tmp);
+    }
+
+    return generate_grid_recc(res, lines, size);
+}
+
+unsigned int *generate_grid_recc(SizedList *res, SizedList *lines, unsigned int size)
+{
+    if (res->size == size)
+    {
+        return res->data;
+    }
+    unsigned int l1 = res->data[res->size - 1];
+    unsigned int l2 = res->data[res->size - 2];
+    for (int i = 0; i < lines->size; i++)
+    {
+        if ((xnor(l1, l2, size) & xnor(lines->data[i], l1, size)) == 0)
+        {
+            printf("adding : %d\n", lines->data[i]);
+            res = append(res, lines->data[i]);
+            lines = removeFromIndex(lines, i);
+            return generate_grid_recc(res, lines, size);
+        }
+    }
+    printf("not found\n");
+}
+
+unsigned int xnor(unsigned int a, unsigned int b, int size)
+{
+    unsigned int res = 0;
+    for (int i = 0; i < size; i++)
+    {
+        res += ((~((a >> i) & 1) ^ ((b >> i) & 1)) & 1) << i;
+    }
+    printf("xnor of %d and %d: %d\n", a, b, res);
+    return res;
 }
