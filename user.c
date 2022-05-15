@@ -266,7 +266,7 @@ void play(unsigned int *sol, unsigned int *mask, int size)
             {
                 i.y = column - 'a';
             }
-            i.x -= 1;
+            i.x = size - i.x;
             if (getValue(mask, i))
                 printf("Value already seen!\n");
         } while (i.x < 0 || i.x >= size || i.y < 0 || i.y >= size || getValue(mask, i));
@@ -303,7 +303,7 @@ void play(unsigned int *sol, unsigned int *mask, int size)
             INDEX *temp_i = Obtainable2D(sol, mask, size, true);
             if (temp_i != NULL)
             {
-                printf("Look at index : %c%d\n", 'A' + temp_i->y, temp_i->x + 1);
+                printf("Look at index : %c%d\n", 'A' + temp_i->y, size - temp_i->x);
                 free(temp_i);
             }
             else
@@ -342,7 +342,7 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
                 break;
             }
         }
-        printf("%c%d\n", 'A' + i->y, i->x + 1);
+        printf("%c%d\n", 'A' + i->y, size - i->x);
         displayUser(sol, mask, size);
         free(i);
         waitKey();

@@ -68,7 +68,7 @@ void displayArray(unsigned int *a, int n)
     for (i.y = 0; i.y < n; i.y++)
     {
         printf("%c|", 'A' + i.y);
-        for (i.x = 0; i.x < n; i.x++)
+        for (i.x = n - 1; i.x >= 0; i.x--)
         {
             temp = getValue(a, i);
             if (temp) // change color of the cell depending on the value
@@ -82,6 +82,7 @@ void displayArray(unsigned int *a, int n)
             printf("%d ", getValue(a, i)); // print the value of the cell
         }
         printf(ANSI_COLOR_RESET); // reset the color
+        printf(" %d", a[i.y]);
         printf("\n");
     }
 }
@@ -103,7 +104,7 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
     for (i.y = 0; i.y < n; i.y++)
     {
         printf("%c|", 'A' + i.y);
-        for (i.x = 0; i.x < n; i.x++)
+        for (i.x = n - 1; i.x >= 0; i.x--)
         {
             if (getValue(mask, i))
             {
@@ -120,10 +121,12 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
             }
             else
             {
-                printf("  ");
+                printf(ANSI_COLOR_RESET);
+                printf(". ");
             }
         }
         printf(ANSI_COLOR_RESET);
+        printf(" %d", sol[i.y]);
         printf("\n");
     }
 }
@@ -307,7 +310,7 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
                     if (isdouble)
                     {
                         if (debug)
-                            printf("You can't put this value since column %d would be a double of actual column\n", 1 + lines);
+                            printf("You can't put this value since column %d would be a double of actual column\n", n - lines);
                         return false;
                     }
                 }
@@ -332,7 +335,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
                     index->y = i;
                     index->x = digit + 1;
                     if (debug)
-                        printf("After two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
+                        printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
                     return index; //↑ Because grid inverted
                 }
             }
@@ -354,7 +357,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
                     index->y = i;
                     index->x = digit - 1;
                     if (debug)
-                        printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
+                        printf("After two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
                     return index; // Because grid inverted
                 }
             }
@@ -370,7 +373,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
             if (debug)
             {
                 if (tr)
-                    printf("There can only be %d 1s on column %d\n", n / 2, index->y + 1);
+                    printf("There can only be %d 1s on column %d\n", n / 2, n - index->y);
                 else
                     printf("There can only be %d 1s on line %c\n", n / 2, index->y + 'A');
             }
@@ -387,7 +390,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
             if (debug)
             {
                 if (tr)
-                    printf("There can only be %d 0s on column %d\n", n / 2, index->y + 1);
+                    printf("There can only be %d 0s on column %d\n", n / 2, n - index->y);
                 else
                     printf("There can only be %d 0s on line %c\n", n / 2, index->y + 'A');
             }
@@ -437,9 +440,9 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
                         if (debug)
                         {
                             if (tr)
-                                printf("There can only be one value for %d,%d since column %d would be a double of actual column\n", index->x + 1, index->y + 1, lines + 1);
+                                printf("There can only be one value for %c%d since column %d would be a double of actual column\n", index->x + 'A', n - index->y, n - lines);
                             else
-                                printf("There can only be one value for %d,%d since line %d would be a double of actual line\n", index->x + 1, index->y + 1, lines + 'A');
+                                printf("There can only be one value for %c%d since line %c would be a double of actual line\n", index->y + 'A', n - index->x, lines + 'A');
                         }
                         return index;
                     }
@@ -538,7 +541,7 @@ INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index, boo
     res->x = index.x;
     res->y = index.y;
     if (debug)
-        printf("By putting an Hypothesis at %d,%d we can lock the value.\n", index.x, index.y);
+        printf("By putting an Hypothesis at %c%d we can lock the value.\n", index.y + 'A', n - index.x);
     free(hyp);
     free(hyp_mask);
     return res;
