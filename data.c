@@ -1,3 +1,6 @@
+/*TaCuzu
+Paul Mairesse and Axel Loones
+Basic functions to modify array*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "data.h"
@@ -14,6 +17,7 @@
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 unsigned int *createArray(int n)
+// To create a 1D array of size n initialized to 0
 {
     unsigned int *a = (unsigned int *)malloc(n * sizeof(unsigned int));
     for (int i = 0; i < n; i++)
@@ -24,6 +28,7 @@ unsigned int *createArray(int n)
 }
 
 void modifyValue(unsigned int *a, INDEX i, bool val)
+// Modify the value of index i
 {
     bool _val = getValue(a, i);
     if (val == _val)
@@ -41,11 +46,13 @@ void modifyValue(unsigned int *a, INDEX i, bool val)
 }
 
 bool getValue(unsigned int *a, INDEX i)
+// Return the value at index i
 {
     return a[i.y] >> i.x & 1;
 }
 
 unsigned int *transpose(unsigned int *a, int n)
+// Make the transpose of the grid to make an easy check for rows/columns
 {
     unsigned int *t = createArray(n);
     INDEX i, i_;
@@ -62,6 +69,7 @@ unsigned int *transpose(unsigned int *a, int n)
 }
 
 unsigned int sum(unsigned int *a, int n)
+// Make the sum of all values
 {
     unsigned int sum = 0;
     for (int i = 0; i < n; i++)
@@ -72,6 +80,7 @@ unsigned int sum(unsigned int *a, int n)
 }
 
 bool is_in(unsigned int *a, int n, unsigned int val)
+// Check if a line is already in the grid
 {
     for (int i = 0; i < n; i++)
     {

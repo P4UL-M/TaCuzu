@@ -1,3 +1,6 @@
+/*TaCuzu
+Paul Mairesse and Axel Loones
+Basic functions to make the grids and change it*/
 #ifndef GRID
 #define GRID
 #include <stdio.h>

@@ -1,3 +1,6 @@
+/*TaCuzu
+Paul Mairesse and Axel Loones
+This file launches the program*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "data.h"

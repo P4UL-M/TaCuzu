@@ -1,7 +1,9 @@
+/*TaCuzu
+Paul Mairesse and Axel Loones
+All constants you want to modify in your code and function to access it*/
 #include "constant.h"
 
-//All constants you want to modify in your code
-
+//Default grids, change them if you want!
 char *Default_mask4x4[]={
     "1000",
     "0110",
@@ -38,7 +40,9 @@ char *Default_sol8x8[]={
     "01100110"
 };
 
+
 unsigned int *convert(char **grid, int n)
+// Transform the 2D list in a 1D list for the rest of the program
 {
     unsigned int *res = (unsigned int*)malloc(n * sizeof(unsigned int));
     for (unsigned int line = 0; line < n; line++)
@@ -57,6 +61,7 @@ unsigned int *convert(char **grid, int n)
 }
 
 unsigned int *getDefaultGrid(int size)
+//To get the default grid
 {
     if (size == 4)
     {
@@ -69,6 +74,7 @@ unsigned int *getDefaultGrid(int size)
 }
 
 unsigned int *getDefaultMask(int size)
+//To get the default mask
 {
     if (size == 4)
     {

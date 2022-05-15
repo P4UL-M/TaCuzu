@@ -1,3 +1,6 @@
+/*TaCuzu
+Paul Mairesse and Axel Loones
+This file contains the menu*/
 #include "user.h"
 #include "constant.h"
 #include "generation.h"
@@ -18,6 +21,7 @@ void solve(unsigned int *sol, unsigned int *mask, int size);
 void waitKey();
 
 void user_main()
+//Contains the main menu, and then redirects to the functions to resolve, create the grid, etc
 {
     int menu, action, size, difficulty;
     do
@@ -28,7 +32,7 @@ void user_main()
     } while (menu < 1 || 4 < menu);
     switch (menu)
     {
-    case 1:
+    case 1:     //User solves the grid
     {
         do
         {
@@ -124,7 +128,7 @@ void user_main()
         user_main();
         return;
     }
-    case 2:
+    case 2:     //Program solves the grid
     {
         do
         {
@@ -202,7 +206,7 @@ void user_main()
         user_main();
         return;
     }
-    case 3:
+    case 3:     //Program creates grid
     {
         do
         {
@@ -242,6 +246,7 @@ void user_main()
 }
 
 void play(unsigned int *sol, unsigned int *mask, int size)
+// Function where the user can play (interface of the game)
 {
     char column;
     int lives = 3, value;
@@ -254,6 +259,7 @@ void play(unsigned int *sol, unsigned int *mask, int size)
     printf("Your grid is:\n\n");
     displayUser(sol, mask, size);
     while (sum(mask, size) != (int)((pow(2, size) - 1) * size) && lives > 0)
+    // Resolution by the user
     {
         do
         {
@@ -278,7 +284,7 @@ void play(unsigned int *sol, unsigned int *mask, int size)
         } while (value != 0 && value != 1);
         modifyValue(temp_sol, i, value);
         modifyValue(mask, i, 1);
-        if (checkValid(temp_sol, mask, size, true))
+        if (checkValid(temp_sol, mask, size, true))     // Test to see if the value entered is good
         {
             if (getValue(sol, i) == getValue(temp_sol, i))
             {
@@ -316,6 +322,7 @@ void play(unsigned int *sol, unsigned int *mask, int size)
 }
 
 void solve(unsigned int *sol, unsigned int *mask, int size)
+// Function where the program solve the grid 
 {
     INDEX *i;
 
@@ -352,6 +359,7 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
 }
 
 void waitKey()
+// Function to wait for the users in resolution
 {
     fflush(stdin);
     printf("Press a key to continue...\n");

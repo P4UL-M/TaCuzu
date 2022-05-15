@@ -1,3 +1,6 @@
+/*TaCuzu
+Paul Mairesse and Axel Loones
+Contains functions to get the default grids*/
 #ifndef CONSTANT
 #define CONSTANT
 #include <stdio.h>

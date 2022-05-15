@@ -1,3 +1,6 @@
+/*TaCuzu
+Paul Mairesse and Axel Loones
+Basic functions to make the grids and change it*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "data.h"
@@ -15,11 +18,13 @@
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 bool getdigit(unsigned int i, int digit)
+// To get a binary digit in the decimal number
 {
     return i >> digit & 1;
 }
 
 int countBits(unsigned int i)
+//To count the bits on a line
 {
     int count = 0;
     while (i != 0)
@@ -31,6 +36,7 @@ int countBits(unsigned int i)
 }
 
 unsigned int *createMask(int size, int difficulty)
+// To create a mask following the difficulty chosen
 {
     unsigned int *m = createArray(size);
     // difficulty go from 1 to 3
@@ -48,14 +54,15 @@ unsigned int *createMask(int size, int difficulty)
         } while (getValue(m, i) != 0); // check if the cell is already visible
         modifyValue(m, i, 1);          // set the cell to visible
     }
-    return m; // return the mask
+    return m;
 }
 
 void displayArray(unsigned int *a, int n)
+// To display the array
 {
     INDEX i;
     int temp;
-    if (n == 4)
+    if (n == 4)                     // For the grid to be easily readable
     {
         printf("  1 2 3 4\n");
         printf("  _ _ _ _\n");
@@ -88,10 +95,11 @@ void displayArray(unsigned int *a, int n)
 }
 
 void displayUser(unsigned int *sol, unsigned int *mask, int n)
+// Display the grid which the user sees with the dots
 {
     INDEX i;
     int temp;
-    if (n == 4)
+    if (n == 4)                     // For the grid to be easily readable
     {
         printf("  1 2 3 4\n");
         printf("  _ _ _ _\n");
@@ -109,7 +117,7 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
             if (getValue(mask, i))
             {
                 temp = getValue(sol, i);
-                if (temp)
+                if (temp) // change color of the cell depending on the value
                 {
                     printf(ANSI_COLOR_RED);
                 }
@@ -117,11 +125,11 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
                 {
                     printf(ANSI_COLOR_BLUE);
                 }
-                printf("%d ", getValue(sol, i));
+                printf("%d ", getValue(sol, i)); // print the value of the cell
             }
             else
             {
-                printf(ANSI_COLOR_RESET);
+                printf(ANSI_COLOR_RESET); // reset the color
                 printf(". ");
             }
         }
@@ -132,9 +140,10 @@ void displayUser(unsigned int *sol, unsigned int *mask, int n)
 }
 
 bool checkDouble(unsigned int *a, int n)
+// Verify is there is double in the 1D list
 {
     for (int i = 0; i < n - 1; i++)
-    { // read comment by @nbro
+    {
         for (int j = i + 1; j < n; j++)
         {
             if (a[i] == a[j])
@@ -147,9 +156,10 @@ bool checkDouble(unsigned int *a, int n)
 }
 
 bool checkDoubleMask(unsigned int *a, unsigned int *mask, int n)
+// Check doubles considering the mask
 {
     for (int i = 0; i < n - 1; i++)
-    { // read comment by @nbro
+    {
         for (int j = i + 1; j < n; j++)
         {
             if (a[i] == a[j] && countBits(mask[i] & mask[j]) == n)
@@ -162,6 +172,7 @@ bool checkDoubleMask(unsigned int *a, unsigned int *mask, int n)
 }
 
 bool checkArray(unsigned int *a, int n)
+// Check that all the rules are respected in the array
 {
     for (int i = 0; i < n; i++)
     {
@@ -187,7 +198,7 @@ bool checkArray(unsigned int *a, int n)
     for (int i = 0; i < n; i++)
     {
         int nb = n - 2;
-        for (int digit = 0; digit < nb; digit++)
+        for (int digit = 0; digit < nb; digit++) // check no more than 3 successive identical values
         {
             if (getdigit(t[i], digit) == getdigit(t[i], digit + 1) && getdigit(t[i], digit) == getdigit(t[i], digit + 2))
             {
@@ -207,6 +218,7 @@ bool checkArray(unsigned int *a, int n)
 }
 
 bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
+//Check the array considering the mask
 {
     // check for lines
     for (int i = 0; i < n; i++)
@@ -322,6 +334,8 @@ bool checkValid(unsigned int *a, unsigned int *mask, int n, bool debug)
 }
 
 INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool debug)
+// Check if there is a value obtainable in the grid following the basic rules
+// Return the index of the obtainable value
 {
     INDEX *index = (INDEX *)malloc(sizeof(INDEX));
     for (int i = 0; i < n; i++)
@@ -336,7 +350,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
                     index->x = digit + 1;
                     if (debug)
                         printf("Before two %ds, there can only be a %d\n", getdigit(sol[i], digit), !getdigit(sol[i], digit));
-                    return index; //↑ Because grid inverted
+                    return index; //↑ Because grid inverted so not after but before
                 }
             }
             if (getdigit(sol[i], digit - 1) == getdigit(sol[i], digit + 1) && 1 == getdigit(mask[i], digit - 1) && getdigit(mask[i], digit + 1) == 1)
@@ -454,6 +468,7 @@ INDEX *Obtainable(unsigned int *sol, unsigned int *mask, int n, bool tr, bool de
 }
 
 INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n, bool debug)
+// Calls twice Obtainable() to get obtainable value both in rows and columns
 {
     INDEX *index = Obtainable(sol, mask, n, false, debug);
     if (index != NULL)
@@ -478,6 +493,8 @@ INDEX *Obtainable2D(unsigned int *sol, unsigned int *mask, int n, bool debug)
 }
 
 INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index, bool debug)
+// Recursive function to make an hypothesis about a position of a value unknown
+// (Called when no value can be obtained with basic rules)
 {
     // get next free index
     while (getValue(mask, index) == 1)
@@ -548,6 +565,7 @@ INDEX *Hypothesis(unsigned int *sol, unsigned int *mask, int n, INDEX index, boo
 }
 
 bool solvable(unsigned int *array, unsigned int *mask_og, int n)
+// Check if the mask make the grid solvable, changing it if not
 {
     unsigned int *sol = (unsigned int *)malloc(sizeof(unsigned int) * n);
     for (int i = 0; i < n; i++)
@@ -573,7 +591,7 @@ bool solvable(unsigned int *array, unsigned int *mask_og, int n)
             INDEX temp;
             temp.x = 0;
             temp.y = 0;
-            i = Hypothesis(sol, mask, n, temp, false);
+            i = Hypothesis(sol, mask, n, temp, false);      // Try an hypothesis to improve research of the solving
             if (i != NULL)
             {
                 modifyValue(mask, *i, true);
