@@ -7,6 +7,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 #define CLEAR "cls"
+#define sleep Sleep
 #else
 #include <unistd.h>
 #define CLEAR "clear"
@@ -32,7 +33,7 @@ void user_main()
         do
         {
             system(CLEAR);
-            printf("Do you want to:\n1.Enter a mask manually\n2.Let the mask be automatically generated\n3.Play directly\n4.Go back\n>");
+            printf("Do you want to:\n1.Enter a mask manually\n2.Let the mask be automatically generated and see it\n3.Play directly\n4.Go back\n>");
             scanf("%d", &action);
         } while (action < 1 || 4 < action);
         unsigned int *mask;
