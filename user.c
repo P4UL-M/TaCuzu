@@ -6,8 +6,10 @@
 #include <ctype.h>
 #ifdef _WIN32
 #include <Windows.h>
+#define CLEAR "cls"
 #else
 #include <unistd.h>
+#define CLEAR "clear"
 #endif
 
 void play(unsigned int *sol, unsigned int *mask, int size);
@@ -19,7 +21,7 @@ void user_main()
     int menu, action, size, difficulty;
     do
     {
-        system("clear");
+        system(CLEAR);
         printf("Do you want to:\n1.Solve a grid\n2.See a grid being solved\n3.Create a grid\n4.Quit\n>");
         scanf("%d", &menu);
     } while (menu < 1 || 4 < menu);
@@ -29,7 +31,7 @@ void user_main()
     {
         do
         {
-            system("clear");
+            system(CLEAR);
             printf("Do you want to:\n1.Enter a mask manually\n2.Let the mask be automatically generated\n3.Play directly\n4.Go back\n>");
             scanf("%d", &action);
         } while (action < 1 || 4 < action);
@@ -117,7 +119,7 @@ void user_main()
         free(mask);
         free(sol);
         waitKey();
-        system("clear");
+        system(CLEAR);
         user_main();
         return;
     }
@@ -125,7 +127,7 @@ void user_main()
     {
         do
         {
-            system("clear");
+            system(CLEAR);
             printf("Do you want to:\n1.Enter a mask manually\n2.Let the mask be automatically generated\n3.Go back\n>");
             scanf("%d", &action);
         } while (action < 1 || 3 < action);
@@ -135,7 +137,7 @@ void user_main()
         {
         case 1:
         {
-            printf("\nYou can change the default grids in the constant.h file, and then play!\nDo you want to use default grids? (Enter 0 for no, 1 for yes)\n>");
+            printf("\nYou can change the default grids in the constant.h file, and then play!\nDo you want to use default grids? (Enter 0 for no, 1 for yes)\n");
             do
             {
                 printf(">");
@@ -195,7 +197,7 @@ void user_main()
         solve(sol, mask, size);
         free(mask);
         free(sol);
-        system("clear");
+        system(CLEAR);
         user_main();
         return;
     }
@@ -203,7 +205,7 @@ void user_main()
     {
         do
         {
-            system("clear");
+            system(CLEAR);
             printf("Do you want to:\n1.Generate 4x4 grid\n2.Generate 8x8 grid\n3.Go back\n>");
             scanf("%d", &action);
         } while (action < 1 || 3 < action);
@@ -229,7 +231,7 @@ void user_main()
         displayArray(ar, size);
         free(ar);
         waitKey();
-        system("clear");
+        system(CLEAR);
         user_main();
         return;
     }
@@ -340,11 +342,11 @@ void solve(unsigned int *sol, unsigned int *mask, int size)
                 break;
             }
         }
-        printf("%c, %d\n", 'A' + i->y, i->x + 1);
+        printf("%c%d\n", 'A' + i->y, i->x + 1);
         displayUser(sol, mask, size);
         free(i);
         waitKey();
-        system("clear");
+        system(CLEAR);
     }
 }
 
