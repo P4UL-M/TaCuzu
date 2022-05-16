@@ -26,6 +26,8 @@ SizedList *list_lines(unsigned int size);                               // gener
 SizedList *extend(SizedList *l1, SizedList *l2);                        // extend a matrix of lines with another matrix given
 ListSizedList *knapsack(int i, int target, int k, SizedList *A, int N); // find all set of k elements in A with sum of target
 ListSizedList *appendList(ListSizedList *l, SizedList *e);              // append a matrix to a list of matrix
-void freeList(ListSizedList *l);                                        // free a list of matrix
+void freeList(ListSizedList *l);
+SizedList *extractWithPattern(SizedList *lines, unsigned int pattern, unsigned int sizePattern, unsigned int size);
+unsigned int *generate_grid_recc(unsigned int *grid, SizedList *lines, unsigned int size, unsigned int index);
 
 #endif

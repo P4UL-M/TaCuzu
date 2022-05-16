@@ -89,6 +89,7 @@ void displayArray(unsigned int *a, int n)
             printf("%d ", getValue(a, i)); // print the value of the cell
         }
         printf(ANSI_COLOR_RESET); // reset the color
+        printf("| %d", a[i.y]);
         printf("\n");
     }
 }

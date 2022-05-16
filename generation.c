@@ -310,7 +310,7 @@ ListSizedList *listGridFromSet(SizedList *arr, int start, int end, ListSizedList
     return l;
 }
 
-unsigned int *generate_grid(unsigned int size)
+unsigned int *generate_grid2(unsigned int size)
 {
     // generate a grid of size size
 
@@ -348,16 +348,18 @@ unsigned int *generate_grid(unsigned int size)
 }
 
 // WIP
-unsigned int *generate_grid_recc(SizedList *res, SizedList *lines, unsigned int size);
 unsigned int xnor(unsigned int a, unsigned int b, int size);
-unsigned int *generate_grid2(unsigned int size)
+SizedList *extractWithPattern(SizedList *lines, unsigned int pattern, unsigned int sizePattern, unsigned int size);
+unsigned int *generate_grid_recc(unsigned int *grid, SizedList *lines, unsigned int size, unsigned int index);
+bool isInList(unsigned int *list, unsigned int value, int size);
+unsigned int *generate_grid(unsigned int size)
 {
     // get all lines
     SizedList *lines = list_lines(size);
     SizedList *res = (SizedList *)malloc(sizeof(SizedList));
 
     srand(time(NULL));
-    for (int i = 0; i < (int)(size / 2); i++)
+    for (int i = 0; i < 2; i++)
     {
         int tmp = rand() % lines->size;
         printf("adding : %d\n", lines->data[tmp]);
@@ -365,28 +367,64 @@ unsigned int *generate_grid2(unsigned int size)
         lines = removeFromIndex(lines, tmp);
     }
 
-    return generate_grid_recc(res, lines, size);
+    // return generate_grid_recc(res, lines, size);
 }
 
-unsigned int *generate_grid_recc(SizedList *res, SizedList *lines, unsigned int size)
+unsigned int *generate_grid_recc(unsigned int *grid, SizedList *lines, unsigned int size, unsigned int index)
 {
-    if (res->size == size)
+    if (index == size * 2 + 1)
     {
-        return res->data;
+        return grid;
     }
-    unsigned int l1 = res->data[res->size - 1];
-    unsigned int l2 = res->data[res->size - 2];
-    for (int i = 0; i < lines->size; i++)
+    grid = transpose(grid, size);
+    int local_index = (int)index / 2;
+    if (index == 1)
     {
-        if ((xnor(l1, l2, size) & xnor(lines->data[i], l1, size)) == 0)
+        srand(time(NULL));
+        grid[0] = lines->data[rand() % lines->size];
+        return generate_grid_recc(grid, lines, size, index + 1);
+    }
+    unsigned int tempIndex = local_index - 1 + index % 2;
+    unsigned int l1;
+    unsigned int l2;
+    if (index > 4)
+    {
+        l1 = grid[tempIndex - 1];
+        l2 = grid[tempIndex - 2];
+    }
+    SizedList *extractlines = extractWithPattern(lines, grid[tempIndex], local_index, size);
+    int offset = rand() % extractlines->size;
+    for (int i = offset; i < extractlines->size + offset; i++)
+    {
+        if (index > 4)
         {
-            printf("adding : %d\n", lines->data[i]);
-            res = append(res, lines->data[i]);
-            lines = removeFromIndex(lines, i);
-            return generate_grid_recc(res, lines, size);
+            if ((xnor(l1, l2, size) & xnor(extractlines->data[i % offset], l1, size)) == 0 && !isInList(grid, extractlines->data[i % offset], tempIndex))
+            {
+                grid[tempIndex] = extractlines->data[i % offset];
+                // find a way to remove doubles
+                unsigned int *res = generate_grid_recc(grid, lines, size, index + 1);
+                if (res != NULL)
+                {
+                    return res;
+                }
+            }
+        }
+        else
+        {
+            if (!isInList(grid, extractlines->data[i % offset], tempIndex))
+            {
+                grid[tempIndex] = extractlines->data[i % offset];
+                // find a way to remove doubles
+                unsigned int *res = generate_grid_recc(grid, lines, size, index + 1);
+                if (res != NULL)
+                {
+                    return res;
+                }
+            }
         }
     }
-    printf("not found\n");
+    printf("returning NULL %d\n", index);
+    return NULL;
 }
 
 unsigned int xnor(unsigned int a, unsigned int b, int size)
@@ -396,6 +434,41 @@ unsigned int xnor(unsigned int a, unsigned int b, int size)
     {
         res += ((~((a >> i) & 1) ^ ((b >> i) & 1)) & 1) << i;
     }
-    printf("xnor of %d and %d: %d\n", a, b, res);
     return res;
+}
+
+SizedList *extractWithPattern(SizedList *lines, unsigned int pattern, unsigned int sizePattern, unsigned int size)
+{
+    SizedList *res = (SizedList *)malloc(sizeof(SizedList));
+    res->data = NULL;
+    res->size = 0;
+    for (int line = 0; line < lines->size; line++)
+    {
+        bool test = true;
+        for (int digit = 0; digit < sizePattern; digit++)
+        {
+            if (((lines->data[line] >> digit) & 1) != ((pattern >> digit) & 1))
+            {
+                test = false;
+                break;
+            }
+        }
+        if (test)
+        {
+            res = append(res, lines->data[line]);
+        }
+    }
+    return res;
+}
+
+bool isInList(unsigned int *list, unsigned int value, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        if (list[i] == value)
+        {
+            return true;
+        }
+    }
+    return false;
 }
